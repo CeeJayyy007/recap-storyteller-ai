@@ -1,123 +1,99 @@
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Star } from "lucide-react";
 
 export const PricingSection = () => {
   return (
-    <section id="pricing" className="py-20 bg-white">
+    <section id="pricing" className="py-20 bg-gray-50 dark:bg-slate-900 transition-colors">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 font-poppins">
             Pricing
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 font-nunito">
             Transparent and flexible options tailored to suit your needs.
           </p>
           
           {/* Toggle */}
           <div className="flex items-center justify-center space-x-4 mb-12">
-            <span className="text-gray-600">Monthly</span>
+            <span className="text-gray-600 dark:text-gray-300 font-nunito">Monthly</span>
             <div className="relative">
-              <div className="w-12 h-6 bg-gray-300 rounded-full"></div>
-              <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow"></div>
+              <div className="w-12 h-6 bg-blue-600 rounded-full cursor-pointer">
+                <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform"></div>
+              </div>
             </div>
-            <span className="text-gray-900 font-medium">Yearly</span>
-            <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-sm font-medium">SAVE 20%</span>
+            <span className="text-gray-900 dark:text-white font-medium font-nunito">Yearly</span>
+            <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm font-medium font-nunito">SAVE 20%</span>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* Personal Plan */}
-          <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Personal</h3>
-            <div className="text-4xl font-bold text-gray-900 mb-2">$19</div>
-            <p className="text-gray-600 mb-8">Ideal for individual users and small teams.</p>
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* Free Plan */}
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-8 text-center transition-colors">
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 font-poppins">Free</h3>
+            <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">$0</div>
+            <p className="text-gray-600 dark:text-gray-300 mb-8 font-nunito">Perfect for getting started with daily tracking.</p>
             
-            <ul className="space-y-3 mb-8 text-left">
+            <ul className="space-y-4 mb-8 text-left">
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">Task Management</span>
+                <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="text-gray-600 dark:text-gray-300 font-nunito">Unlimited tasks and notes</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">Real-time Collaboration</span>
+                <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="text-gray-600 dark:text-gray-300 font-nunito">Daily AI-generated recaps</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">Basic Analytics</span>
+                <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="text-gray-600 dark:text-gray-300 font-nunito">Basic standup summaries</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">Mobile App Access</span>
+                <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="text-gray-600 dark:text-gray-300 font-nunito">7 day data retention</span>
               </li>
             </ul>
             
-            <Button variant="outline" className="w-full">
-              Call To Action
+            <Button variant="outline" className="w-full font-nunito border-2">
+              Get Started Free
             </Button>
           </div>
 
           {/* Pro Plan */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center relative">
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+          <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl p-8 text-center relative overflow-hidden">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-semibold font-nunito flex items-center">
+              <Star className="w-4 h-4 mr-1" />
               MOST POPULAR
             </div>
             
-            <h3 className="text-xl font-semibold text-white mb-4">Pro</h3>
-            <div className="text-4xl font-bold text-white mb-2">$39</div>
-            <p className="text-gray-300 mb-8">For growing businesses and medium-sized teams.</p>
+            <h3 className="text-2xl font-semibold text-white mb-4 font-poppins">Pro</h3>
+            <div className="text-5xl font-bold text-white mb-2 font-poppins">$7</div>
+            <p className="text-blue-100 mb-8 font-nunito">For professionals who want the full experience.</p>
             
-            <ul className="space-y-3 mb-8 text-left">
+            <ul className="space-y-4 mb-8 text-left">
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Advanced Reporting</span>
+                <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-blue-100 font-nunito">Everything in Free, plus:</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Customizable Branding</span>
+                <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-blue-100 font-nunito">Weekly and career recaps</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Enhanced Security</span>
+                <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-blue-100 font-nunito">PDF, Markdown & resume exports</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Workflow Automation</span>
+                <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-blue-100 font-nunito">Unlimited cloud sync & backup</span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-blue-100 font-nunito">Priority support</span>
               </li>
             </ul>
             
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-              Call To Action
-            </Button>
-          </div>
-
-          {/* Enterprise Plan */}
-          <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Enterprise</h3>
-            <div className="text-4xl font-bold text-gray-900 mb-2">$79</div>
-            <p className="text-gray-600 mb-8">Tailored for large companies and enterprises.</p>
-            
-            <ul className="space-y-3 mb-8 text-left">
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">Dedicated Account Manager</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">Advanced Integrations</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">Custom Solutions</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="text-gray-600">24/7 Priority Support</span>
-              </li>
-            </ul>
-            
-            <Button variant="outline" className="w-full">
-              Call To Action
+            <Button className="w-full bg-white text-blue-600 hover:bg-gray-100 font-nunito font-semibold">
+              Upgrade to Pro
             </Button>
           </div>
         </div>

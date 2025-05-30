@@ -10,7 +10,7 @@ import { NavigationHeader } from "@/components/landing/NavigationHeader";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background dark:bg-slate-950 transition-colors">
       <NavigationHeader />
       <HeroSection />
       <ProblemSection />

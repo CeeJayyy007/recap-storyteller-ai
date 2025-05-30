@@ -1,47 +1,49 @@
 
+import { BarChart3, Zap, Shield, Palette, Bot, Headphones } from "lucide-react";
+
 export const SolutionSection = () => {
   const features = [
     {
-      icon: "📊",
-      title: "Real-time Analytics",
-      description: "Get instant insights into your daily productivity and track progress with actionable data-driven decisions."
+      icon: <BarChart3 className="w-8 h-8" />,
+      title: "AI-Powered Summaries",
+      description: "Let Recap write your daily, weekly, or career recaps in your tone and voice with advanced AI technology."
     },
     {
-      icon: "⚙️",
-      title: "Scalable Infrastructure", 
-      description: "Scale effortlessly to meet growing demands with our flexible and robust infrastructure that adapts to your needs."
+      icon: <Zap className="w-8 h-8" />,
+      title: "Task-first Workflow", 
+      description: "Mark tasks as completed, pending, or carried over — all built around daily momentum and productivity."
     },
     {
-      icon: "🔒",
-      title: "Advanced Security",
-      description: "Rest easy knowing your data is protected with top-tier security measures and compliance standards."
+      icon: <Shield className="w-8 h-8" />,
+      title: "Linked Notes & Context",
+      description: "Link multiple tasks to notes. Track insights, lessons, mistakes — all searchable and organized later."
     },
     {
-      icon: "🎨",
-      title: "Intuitive Interface",
-      description: "Enjoy a user-friendly and intuitive interface for seamless navigation and boost productivity."
+      icon: <Palette className="w-8 h-8" />,
+      title: "Progress Timeline",
+      description: "See your personal timeline of wins, effort, and growth across time with beautiful visualizations."
     },
     {
-      icon: "🤖",
-      title: "Automated Workflows",
-      description: "Optimize your processes with intelligent workflows, saving time and reducing manual effort."
+      icon: <Bot className="w-8 h-8" />,
+      title: "Portfolio & Resume Ready",
+      description: "Export professional-style recaps and achievements in one click for career advancement."
     },
     {
-      icon: "💬",
-      title: "24/7 Support",
-      description: "Get round-the-clock support from our dedicated team to ensure a smooth experience."
+      icon: <Headphones className="w-8 h-8" />,
+      title: "24/7 Smart Sync",
+      description: "Your data syncs across all devices with intelligent backup and version control."
     }
   ];
 
   return (
-    <section id="features" className="py-20 bg-gray-50">
+    <section id="features" className="py-20 bg-white dark:bg-slate-950 transition-colors">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 font-poppins">
             Features
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Empowering your business with cutting-edge tools and functionalities.
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto font-nunito">
+            Empowering your workflow with cutting-edge AI tools and intuitive functionality.
           </p>
         </div>
 
@@ -49,13 +51,15 @@ export const SolutionSection = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="bg-white rounded-xl p-8 text-center hover:shadow-lg transition-shadow duration-300"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-8 text-center hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-slate-700 group hover:scale-105"
             >
-              <div className="text-4xl mb-6">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="text-blue-600 dark:text-blue-400 mb-6 flex justify-center group-hover:scale-110 transition-transform">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-poppins">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed font-nunito">
                 {feature.description}
               </p>
             </div>
