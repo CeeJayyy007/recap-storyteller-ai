@@ -1,44 +1,47 @@
 
-import { Check, Calendar, FileText, Star, ArrowRight } from "lucide-react";
-
 export const SolutionSection = () => {
   const features = [
     {
-      icon: "🧠",
-      title: "AI-Powered Summaries",
-      description: "Let Recap write your daily, weekly, or career recaps in your tone and voice."
+      icon: "📊",
+      title: "Real-time Analytics",
+      description: "Get instant insights into your daily productivity and track progress with actionable data-driven decisions."
     },
     {
-      icon: "✅",
-      title: "Task-first Workflow",
-      description: "Mark tasks as completed, pending, or carried over — all built around daily momentum."
+      icon: "⚙️",
+      title: "Scalable Infrastructure", 
+      description: "Scale effortlessly to meet growing demands with our flexible and robust infrastructure that adapts to your needs."
     },
     {
-      icon: "📝",
-      title: "Linked Notes That Add Context",
-      description: "Link multiple tasks to a note. Track insights, lessons, mistakes — all searchable later."
+      icon: "🔒",
+      title: "Advanced Security",
+      description: "Rest easy knowing your data is protected with top-tier security measures and compliance standards."
     },
     {
-      icon: "📈",
-      title: "Progress Timeline",
-      description: "See your personal timeline of wins, effort, and growth across time."
+      icon: "🎨",
+      title: "Intuitive Interface",
+      description: "Enjoy a user-friendly and intuitive interface for seamless navigation and boost productivity."
     },
     {
-      icon: "📤",
-      title: "Portfolio & Resume Ready",
-      description: "Export professional-style recaps and achievements in one click."
+      icon: "🤖",
+      title: "Automated Workflows",
+      description: "Optimize your processes with intelligent workflows, saving time and reducing manual effort."
+    },
+    {
+      icon: "💬",
+      title: "24/7 Support",
+      description: "Get round-the-clock support from our dedicated team to ensure a smooth experience."
     }
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section id="features" className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Your workflow, supercharged with AI
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Features
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Recap fits seamlessly into your daily routine and provides clear value from day one.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Empowering your business with cutting-edge tools and functionalities.
           </p>
         </div>
 
@@ -46,10 +49,10 @@ export const SolutionSection = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 hover:scale-105 transform transition-transform"
+              className="bg-white rounded-xl p-8 text-center hover:shadow-lg transition-shadow duration-300"
             >
-              <div className="text-3xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <div className="text-4xl mb-6">{feature.icon}</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
                 {feature.title}
               </h3>
               <p className="text-gray-600 leading-relaxed">

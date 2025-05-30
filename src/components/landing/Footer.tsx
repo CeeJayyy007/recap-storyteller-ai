@@ -1,70 +1,69 @@
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-16">
+    <footer className="bg-white border-t border-gray-100 py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold">Recap</h3>
-            <p className="text-gray-400">
-              Track your progress. Tell your story.
-            </p>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">R</span>
+              </div>
+              <span className="font-semibold text-gray-900">Recap</span>
+            </div>
           </div>
 
           {/* Links */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Product</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Demo</a></li>
+            <h4 className="font-semibold text-gray-900">Product</h4>
+            <ul className="space-y-3 text-gray-600">
+              <li><a href="#" className="hover:text-gray-900 transition-colors">Features</a></li>
+              <li><a href="#" className="hover:text-gray-900 transition-colors">Pricing</a></li>
+              <li><a href="#" className="hover:text-gray-900 transition-colors">Demo</a></li>
             </ul>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-semibold">Company</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms</a></li>
+            <h4 className="font-semibold text-gray-900">Company</h4>
+            <ul className="space-y-3 text-gray-600">
+              <li><a href="#" className="hover:text-gray-900 transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-gray-900 transition-colors">Terms of Service</a></li>
             </ul>
           </div>
 
           {/* Newsletter */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Stay Updated</h4>
-            <p className="text-gray-400 text-sm">
-              Subscribe for launch updates and productivity tips.
+            <h3 className="text-xl font-semibold text-gray-900">Join our Newsletter</h3>
+            <p className="text-gray-600 text-sm">
+              And stay in touch with us!
             </p>
             <div className="flex space-x-2">
-              <input 
+              <Input 
                 type="email" 
                 placeholder="Enter your email"
-                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                className="flex-1"
               />
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                Subscribe
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                →
               </Button>
             </div>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
-            © 2024 Recap. All rights reserved.
+        <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-600 text-sm">
+            © 2023 Symbol, Inc. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              Twitter
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              LinkedIn
-            </a>
+            <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">f</a>
+            <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">📷</a>
+            <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">🐦</a>
+            <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">in</a>
           </div>
         </div>
       </div>

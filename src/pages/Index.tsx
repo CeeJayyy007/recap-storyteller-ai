@@ -6,10 +6,12 @@ import { SocialProofSection } from "@/components/landing/SocialProofSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { Footer } from "@/components/landing/Footer";
+import { NavigationHeader } from "@/components/landing/NavigationHeader";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-white">
+      <NavigationHeader />
       <HeroSection />
       <ProblemSection />
       <SolutionSection />
