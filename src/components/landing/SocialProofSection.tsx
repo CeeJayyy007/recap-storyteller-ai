@@ -1,4 +1,6 @@
 
+import { Star } from "lucide-react";
+
 export const SocialProofSection = () => {
   const testimonials = [
     {
