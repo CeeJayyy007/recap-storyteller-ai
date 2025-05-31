@@ -1,4 +1,3 @@
-
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ProblemSection } from "@/components/landing/ProblemSection";
 import { SolutionSection } from "@/components/landing/SolutionSection";
@@ -13,7 +12,7 @@ const Index = () => {
     <div className="min-h-screen bg-background dark:bg-slate-950 transition-colors relative">
       {/* Light mode background pattern - made more visible */}
       <div className="absolute inset-0 dark:hidden">
-        <div 
+        <div
           className="absolute inset-0 opacity-60"
           style={{
             backgroundImage: `
@@ -23,24 +22,25 @@ const Index = () => {
               radial-gradient(circle at 10% 60%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
               radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 50%)
             `,
-            backgroundSize: '600px 600px, 700px 700px, 800px 800px, 650px 650px, 550px 550px',
-            backgroundPosition: '0% 0%, 100% 100%, 50% 0%, 0% 50%, 100% 20%',
-            filter: 'blur(30px)'
+            backgroundSize:
+              "600px 600px, 700px 700px, 800px 800px, 650px 650px, 550px 550px",
+            backgroundPosition: "0% 0%, 100% 100%, 50% 0%, 0% 50%, 100% 20%",
+            filter: "blur(30px)",
           }}
         />
         {/* Additional subtle grid pattern */}
-        <div 
+        <div
           className="absolute inset-0 opacity-20"
           style={{
             backgroundImage: `
               linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
               linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px)
             `,
-            backgroundSize: '60px 60px'
+            backgroundSize: "60px 60px",
           }}
         />
       </div>
-      
+
       <div className="relative z-10">
         <NavigationHeader />
         <HeroSection />

@@ -1,4 +1,3 @@
-
 import { Star } from "lucide-react";
 
 export const SocialProofSection = () => {
@@ -7,20 +6,22 @@ export const SocialProofSection = () => {
       name: "Sarah Chen",
       role: "Senior Developer",
       avatar: "SC",
-      content: "Recap helped me prove my value during performance reviews — no more guessing what I did last month! The AI summaries are incredibly accurate.",
-      rating: 5
+      content:
+        "Recap helped me prove my value during performance reviews — no more guessing what I did last month! The AI summaries are incredibly accurate.",
+      rating: 5,
     },
     {
-      name: "Marcus Johnson", 
+      name: "Marcus Johnson",
       role: "Product Designer",
       avatar: "MJ",
-      content: "Honestly, this makes standups a breeze. I just show the AI summary and my team knows exactly what I've been working on.",
-      rating: 5
-    }
+      content:
+        "Honestly, this makes standups a breeze. I just show the AI summary and my team knows exactly what I've been working on.",
+      rating: 5,
+    },
   ];
 
   return (
-    <section className="py-20 bg-gray-50 dark:bg-slate-900 transition-colors">
+    <section className="py-20 bg-gray-50/70 dark:bg-slate-900 transition-colors">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 font-poppins">
@@ -33,23 +34,35 @@ export const SocialProofSection = () => {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl border border-gray-100 dark:border-slate-700 transition-colors">
+            <div
+              key={index}
+              className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl border border-gray-100 dark:border-slate-700 transition-colors"
+            >
               <div className="flex items-center space-x-4 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold font-poppins">{testimonial.avatar}</span>
+                  <span className="text-white font-semibold font-poppins">
+                    {testimonial.avatar}
+                  </span>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 dark:text-white font-poppins">{testimonial.name}</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300 font-nunito">{testimonial.role}</div>
+                  <div className="font-semibold text-gray-900 dark:text-white font-poppins">
+                    {testimonial.name}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300 font-nunito">
+                    {testimonial.role}
+                  </div>
                 </div>
               </div>
-              
+
               <div className="flex mb-4">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  <Star
+                    key={i}
+                    className="w-5 h-5 text-yellow-400 fill-current"
+                  />
                 ))}
               </div>
-              
+
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed font-nunito">
                 "{testimonial.content}"
               </p>
