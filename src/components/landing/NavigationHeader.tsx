@@ -3,7 +3,7 @@ import { DarkModeToggle } from "./DarkModeToggle";
 import { useState } from "react";
 import { LoginDialog } from "./LoginDialog";
 import { SignupDialog } from "./SignupDialog";
-import { Logo } from "../common/logo";
+import { Logo } from "../common/Logo";
 
 export const NavigationHeader = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);

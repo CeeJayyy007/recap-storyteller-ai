@@ -8,10 +8,11 @@ import {
   Archive,
   LogOut,
   User,
-  Zap,
   HelpCircle,
   Bolt,
   Menu,
+  Sun,
+  Moon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,8 +26,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Logo } from "../common/logo";
+import { Logo } from "../common/Logo";
 import { Separator } from "@/components/ui/separator";
+import { useThemeStore } from "@/stores/theme-store";
 
 interface NavigationItem {
   href: string;
@@ -97,18 +99,12 @@ export function Sidebar({
     return saved ? JSON.parse(saved) : false;
   });
 
+  const { theme, toggleTheme } = useThemeStore();
+
   // Toggle between avatar and logo every 5 seconds with coin flip animation
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsFlipping(true);
-      // Switch content mid-flip (when rotated 90 degrees)
-      setTimeout(() => {
-        setShowLogo((prev) => !prev);
-      }, 150); // Half of the 300ms flip duration
-      // Reset flip state after animation completes
-      setTimeout(() => {
-        setIsFlipping(false);
-      }, 300);
+      setShowLogo((prev) => !prev);
     }, 5000);
 
     return () => clearInterval(interval);
@@ -153,61 +149,62 @@ export function Sidebar({
     <>
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex fixed left-0 top-0 h-full w-20 bg-white dark:bg-slate-900 border-r border-border flex-col items-center py-4 z-50">
-        {/* Profile/Logo Section */}
-        <div className="mb-8" style={{ perspective: "1000px" }}>
+        {/* Profile section with coin flip animation */}
+        <div className="mb-6">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative w-14 h-14 overflow-hidden hover:ring-2 hover:ring-primary/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20">
-                {/* Avatar */}
+              <button className="relative w-14 h-14 rounded-lg hover:ring-2 hover:ring-primary transition-all duration-200 group">
                 <div
-                  className={cn(
-                    "absolute inset-0 transition-all duration-300 ease-in-out",
-                    isFlipping && "animate-coin-flip"
-                  )}
+                  className="w-full h-full relative"
                   style={{
+                    transformStyle: "preserve-3d",
                     transform: showLogo ? "rotateY(180deg)" : "rotateY(0deg)",
-                    backfaceVisibility: "hidden",
+                    transition: "transform 0.6s ease-in-out",
                   }}
                 >
-                  <Avatar className="w-full h-full">
-                    <AvatarImage src={userAvatar} alt={userName} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                      {userName.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-
-                {/* Logo */}
-                <div
-                  className={cn(
-                    "absolute inset-0 rounded-full flex items-center justify-center transition-all duration-300 ease-in-out",
-                    isFlipping && "animate-coin-flip"
-                  )}
-                  style={{
-                    transform: showLogo ? "rotateY(0deg)" : "rotateY(-180deg)",
-                    backfaceVisibility: "hidden",
-                  }}
-                >
-                  <Logo />
+                  {/* Avatar side */}
+                  <div
+                    className="absolute inset-0 w-full h-full"
+                    style={{
+                      backfaceVisibility: "hidden",
+                    }}
+                  >
+                    <Avatar className="w-14 h-14">
+                      <AvatarImage src={userAvatar} alt={userName} />
+                      <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">
+                        {userName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  {/* Logo side */}
+                  <div
+                    className="absolute inset-0 w-full h-full flex items-center justify-center"
+                    style={{
+                      backfaceVisibility: "hidden",
+                      transform: "rotateY(180deg)",
+                    }}
+                  >
+                    <Logo className="w-14 h-14" />
+                  </div>
                 </div>
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="right" align="start" className="w-48">
+            <DropdownMenuContent side="right" className="w-48">
               <DropdownMenuItem onClick={() => handleProfileMenuAction("home")}>
-                <Home className="w-4 h-4 mr-2" />
-                Home
+                <Home className="mr-2 h-4 w-4" />
+                <span>Home</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleProfileMenuAction("profile")}
               >
-                <User className="w-4 h-4 mr-2" />
-                Profile
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleProfileMenuAction("logout")}
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -268,6 +265,29 @@ export function Sidebar({
 
         {/* Footer Navigation Items */}
         <div className="flex flex-col gap-4 mt-4">
+          {/* Theme Toggle */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={toggleTheme}
+                className="flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-accent group text-muted-foreground hover:text-foreground"
+              >
+                {theme === "light" ? (
+                  <Moon className="w-5 h-5" />
+                ) : (
+                  <Sun className="w-5 h-5" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>
+                {theme === "light"
+                  ? "Switch to Dark Mode"
+                  : "Switch to Light Mode"}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+
           {navigationFooterItems.map((item) => {
             const isActive = getActiveKey() === item.key;
             const Icon = item.icon;
