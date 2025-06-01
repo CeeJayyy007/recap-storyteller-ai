@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Check, ChevronsUpDown, X, Plus } from "lucide-react";
+import { Check, ChevronsUpDown, X, Plus, CalendarIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -46,6 +47,8 @@ import { useModalStore } from "@/stores/modal-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useNoteStore } from "@/stores/note-store";
 import { useTagStore } from "@/stores/tag-store";
+import { Calendar } from "@/components/ui/calendar";
+import { format, parseISO } from "date-fns";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -53,6 +56,9 @@ const formSchema = z.object({
   status: z.enum(["pending", "completed", "carried-over"]),
   linkedNoteId: z.string().optional(),
   tags: z.array(z.string()).default([]),
+  date: z.date({
+    required_error: "Please select a date for the task",
+  }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -65,6 +71,7 @@ export function EditTaskModal() {
 
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   const [isTagOpen, setIsTagOpen] = useState(false);
+  const [isDateOpen, setIsDateOpen] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -76,6 +83,7 @@ export function EditTaskModal() {
       status: "pending",
       linkedNoteId: "",
       tags: [],
+      date: new Date(),
     },
   });
 
@@ -87,6 +95,7 @@ export function EditTaskModal() {
         description: selectedTask.description,
         status: selectedTask.status,
         linkedNoteId: selectedTask.linkedNoteId || "",
+        date: selectedTask.date ? parseISO(selectedTask.date) : new Date(),
       });
       setSelectedTags(selectedTask.tags);
     }
@@ -100,6 +109,7 @@ export function EditTaskModal() {
       description: data.description || "",
       status: data.status,
       tags: selectedTags,
+      date: format(data.date, "yyyy-MM-dd"),
       linkedNoteId: data.linkedNoteId || null,
     });
 
@@ -168,6 +178,51 @@ export function EditTaskModal() {
 
             <FormField
               control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date *</FormLabel>
+                  <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsDateOpen(false);
+                        }}
+                        disabled={(date) =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0))
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="status"
               render={({ field }) => (
                 <FormItem>
@@ -221,49 +276,49 @@ export function EditTaskModal() {
                     <PopoverContent className="w-[400px] p-0">
                       <Command>
                         <CommandInput placeholder="Search notes..." />
-                        <CommandEmpty>No notes found.</CommandEmpty>
-                        <CommandGroup>
-                          <CommandItem
-                            value=""
-                            onSelect={() => {
-                              form.setValue("linkedNoteId", "");
-                              setIsNoteOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                !field.value ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            No note
-                          </CommandItem>
-                          {availableNotes.map((note) => (
+                        <CommandList>
+                          <CommandEmpty>No notes found.</CommandEmpty>
+                          <CommandGroup>
                             <CommandItem
-                              key={note.id}
-                              value={note.id}
-                              onSelect={(currentValue) => {
-                                form.setValue(
-                                  "linkedNoteId",
-                                  currentValue === field.value
-                                    ? ""
-                                    : currentValue
-                                );
+                              value=""
+                              onSelect={() => {
+                                form.setValue("linkedNoteId", "");
                                 setIsNoteOpen(false);
                               }}
                             >
                               <Check
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  field.value === note.id
-                                    ? "opacity-100"
-                                    : "opacity-0"
+                                  !field.value ? "opacity-100" : "opacity-0"
                                 )}
                               />
-                              {note.title}
+                              No note
                             </CommandItem>
-                          ))}
-                        </CommandGroup>
+                            {availableNotes.map((note) => (
+                              <CommandItem
+                                key={note.id}
+                                value={note.title}
+                                onSelect={() => {
+                                  form.setValue(
+                                    "linkedNoteId",
+                                    field.value === note.id ? "" : note.id
+                                  );
+                                  setIsNoteOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    field.value === note.id
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {note.title}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -304,40 +359,42 @@ export function EditTaskModal() {
                       value={tagInput}
                       onValueChange={setTagInput}
                     />
-                    <CommandEmpty>
-                      <Button
-                        variant="ghost"
-                        className="w-full"
-                        onClick={() => {
-                          if (tagInput.trim()) {
-                            handleAddTag(tagInput);
-                            setIsTagOpen(false);
-                          }
-                        }}
-                      >
-                        Create "{tagInput}"
-                      </Button>
-                    </CommandEmpty>
-                    <CommandGroup>
-                      {tags
-                        .filter((tag) => !selectedTags.includes(tag.name))
-                        .map((tag) => (
-                          <CommandItem
-                            key={tag.id}
-                            value={tag.name}
-                            onSelect={(currentValue) => {
-                              handleAddTag(currentValue);
-                              setIsTagOpen(false);
-                            }}
+                    <CommandList>
+                      <CommandEmpty>
+                        {tagInput.trim() && (
+                          <Button
+                            variant="ghost"
+                            className="w-full"
+                            onClick={() => handleAddTag(tagInput)}
                           >
-                            <div
-                              className="w-3 h-3 rounded-full mr-2"
-                              style={{ backgroundColor: tag.color }}
-                            />
-                            {tag.name}
-                          </CommandItem>
-                        ))}
-                    </CommandGroup>
+                            Create "{tagInput}"
+                          </Button>
+                        )}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {(tags || [])
+                          .filter(
+                            (tag) =>
+                              !selectedTags.includes(tag.name) &&
+                              tag.name
+                                .toLowerCase()
+                                .includes(tagInput.toLowerCase())
+                          )
+                          .map((tag) => (
+                            <CommandItem
+                              key={tag.id}
+                              value={tag.name}
+                              onSelect={() => handleAddTag(tag.name)}
+                            >
+                              <div
+                                className="w-3 h-3 rounded-full mr-2"
+                                style={{ backgroundColor: tag.color }}
+                              />
+                              {tag.name}
+                            </CommandItem>
+                          ))}
+                      </CommandGroup>
+                    </CommandList>
                   </Command>
                 </PopoverContent>
               </Popover>

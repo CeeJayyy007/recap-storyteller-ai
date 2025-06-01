@@ -1,6 +1,6 @@
 import { MoreVertical, Eye, Edit, FileText, Trash2 } from "lucide-react";
 import { Task } from "@/types/task";
-import { cn } from "@/lib/utils";
+import { cn, getDateOnly, formatDate } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
 import { Badge } from "../ui/badge";
 import {
@@ -18,6 +18,7 @@ interface TaskCardProps {
   onEdit: (task: Task) => void;
   onNote: (task: Task) => void;
   onDelete: (task: Task) => void;
+  selectedDate: string;
 }
 
 export function TaskCard({
@@ -27,49 +28,28 @@ export function TaskCard({
   onEdit,
   onNote,
   onDelete,
+  selectedDate,
 }: TaskCardProps) {
+  const taskDateOnly = getDateOnly(task.date);
+  const selectedDateOnly = getDateOnly(selectedDate);
+
+  const isCurrentDate = taskDateOnly.getTime() === selectedDateOnly.getTime();
+  const isPastDate = taskDateOnly.getTime() < selectedDateOnly.getTime();
+
   const getCardStyles = () => {
     switch (task.status) {
       case "completed":
         return "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800";
       case "pending":
-        return "bg-yellow-50 border-yellow-200 dark:bg-yellow-950 dark:border-yellow-800";
-      case "carried-over":
-        return "bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800";
+        if (task.status === "pending" && isPastDate) {
+          return "bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800";
+        } else if (task.status === "pending" && isCurrentDate) {
+          return "bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800";
+        } else {
+          return "bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800";
+        }
       default:
         return "bg-gray-50 border-gray-200 dark:bg-gray-950 dark:border-gray-800";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const taskDate = new Date(dateString);
-    const today = new Date();
-
-    // Reset time to compare just dates
-    const taskDateOnly = new Date(
-      taskDate.getFullYear(),
-      taskDate.getMonth(),
-      taskDate.getDate()
-    );
-    const todayOnly = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
-
-    const diffTime = todayOnly.getTime() - taskDateOnly.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) {
-      return "today";
-    } else if (diffDays === 1) {
-      return "1 day ago";
-    } else if (diffDays > 1) {
-      return `${diffDays} days ago`;
-    } else if (diffDays === -1) {
-      return "tomorrow";
-    } else {
-      return `in ${Math.abs(diffDays)} days`;
     }
   };
 
@@ -126,7 +106,7 @@ export function TaskCard({
               <MoreVertical className="h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuContent align="start" className="w-40">
             <DropdownMenuItem onClick={() => onView(task)}>
               <Eye className="mr-2 h-4 w-4" />
               View

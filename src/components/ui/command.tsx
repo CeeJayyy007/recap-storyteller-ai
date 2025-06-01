@@ -21,13 +21,28 @@ const Command = React.forwardRef<
 ))
 Command.displayName = CommandPrimitive.displayName
 
-interface CommandDialogProps extends DialogProps {}
-
-const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
+const CommandDialog = ({ children, ...props }: DialogProps) => {
   return (
     <Dialog {...props}>
       <DialogContent className="overflow-hidden p-0 shadow-lg">
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+        <Command className={cn(
+          // Group heading styles
+          "[&_[cmdk-group-heading]]:px-2",
+          "[&_[cmdk-group-heading]]:font-medium", 
+          "[&_[cmdk-group-heading]]:text-muted-foreground",
+          // Group spacing
+          "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0",
+          "[&_[cmdk-group]]:px-2",
+          // Input wrapper and input styles
+          "[&_[cmdk-input-wrapper]_svg]:h-5",
+          "[&_[cmdk-input-wrapper]_svg]:w-5",
+          "[&_[cmdk-input]]:h-12",
+          // Item styles
+          "[&_[cmdk-item]]:px-2",
+          "[&_[cmdk-item]]:py-3",
+          "[&_[cmdk-item]_svg]:h-5",
+          "[&_[cmdk-item]_svg]:w-5"
+        )}>
           {children}
         </Command>
       </DialogContent>
@@ -70,10 +85,10 @@ CommandList.displayName = CommandPrimitive.List.displayName
 const CommandEmpty = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->((props, ref) => (
+>(({ className, ...props }, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className="py-6 text-center text-sm"
+    className={cn("py-6 text-center text-sm", className)}
     {...props}
   />
 ))
@@ -124,12 +139,13 @@ const CommandItem = React.forwardRef<
 
 CommandItem.displayName = CommandPrimitive.Item.displayName
 
-const CommandShortcut = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) => {
+const CommandShortcut = React.forwardRef<
+  HTMLSpanElement,
+  React.HTMLAttributes<HTMLSpanElement>
+>(({ className, ...props }, ref) => {
   return (
     <span
+      ref={ref}
       className={cn(
         "ml-auto text-xs tracking-widest text-muted-foreground",
         className
@@ -137,7 +153,7 @@ const CommandShortcut = ({
       {...props}
     />
   )
-}
+})
 CommandShortcut.displayName = "CommandShortcut"
 
 export {

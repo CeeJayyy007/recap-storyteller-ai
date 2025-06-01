@@ -5,6 +5,7 @@ import * as z from "zod";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -47,22 +48,22 @@ export function AddNoteModal() {
     if (!selectedTask) return;
 
     // Create the note with basic content structure
-    const noteContent = {
-      blocks: [
-        {
-          id: crypto.randomUUID(),
-          type: "paragraph",
-          data: {
-            text: data.content || ""
-          }
-        }
-      ]
-    };
+    // const noteContent = {
+    //   blocks: [
+    //     {
+    //       id: crypto.randomUUID(),
+    //       type: "paragraph",
+    //       data: {
+    //         text: data.content || ""
+    //       }
+    //     }
+    //   ]
+    // };
 
     const newNote = addNote({
       user_id: "user-1", // TODO: Get from auth context
       title: data.title,
-      content: noteContent,
+      content: data.content,
       date: selectedTask.date,
       linkedTaskIds: [selectedTask.id],
     });
@@ -82,6 +83,9 @@ export function AddNoteModal() {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Add Note for Task</DialogTitle>
+          <DialogDescription className="text-sm text-gray-500 dark:text-gray-400">
+            Create a new note to help you stay on top of your goals.
+          </DialogDescription>
         </DialogHeader>
 
         {selectedTask && (
@@ -100,10 +104,7 @@ export function AddNoteModal() {
                 <FormItem>
                   <FormLabel>Note Title</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter note title..." 
-                      {...field} 
-                    />
+                    <Input placeholder="Enter note title..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,10 +118,10 @@ export function AddNoteModal() {
                 <FormItem>
                   <FormLabel>Initial Content (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Enter initial note content..." 
+                    <Textarea
+                      placeholder="Enter initial note content..."
                       rows={4}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -132,13 +133,11 @@ export function AddNoteModal() {
               <Button type="button" variant="outline" onClick={closeAddNote}>
                 Cancel
               </Button>
-              <Button type="submit">
-                Create Note
-              </Button>
+              <Button type="submit">Create Note</Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
-} 
+}

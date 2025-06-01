@@ -1,9 +1,9 @@
 import {
   PlusIcon,
-  RotateCcw,
   Clock,
   CheckCircle,
   CalendarIcon,
+  RotateCw,
 } from "lucide-react";
 import { Calendar } from "./Calendar";
 import { SearchInput } from "../common/SearchInput";
@@ -131,6 +131,7 @@ export function Taskbar({ isVisible }: TaskbarProps) {
               onEdit={handleEdit}
               onNote={handleNote}
               onDelete={handleDelete}
+              selectedDate={selectedDate.toISOString()}
             />
           ))}
         </div>
@@ -170,16 +171,16 @@ export function Taskbar({ isVisible }: TaskbarProps) {
               {renderTaskSection(
                 "Carried Over",
                 groupedTasks.carriedOver,
-                <RotateCcw className="h-4 w-4 text-orange-600 dark:text-orange-400" />,
-                "border-orange-200 dark:border-orange-800"
+                <RotateCw className="h-4 w-4 text-red-600 dark:text-red-400" />,
+                "border-red-200 dark:border-red-800"
               )}
 
               {/* Pending Tasks */}
               {renderTaskSection(
                 "Pending",
                 groupedTasks.pending,
-                <Clock className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />,
-                "border-yellow-200 dark:border-yellow-800"
+                <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />,
+                "border-orange-200 dark:border-orange-800"
               )}
 
               {/* Completed Tasks */}

@@ -49,7 +49,7 @@ export function Calendar() {
 
   const formatSelectedDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
-      month: "long",
+      month: "short",
       day: "numeric",
       year: "numeric",
     });
@@ -156,7 +156,7 @@ export function Calendar() {
   return (
     <div className="w-full mb-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center gap-2">
           <Button
             variant="outline"
             size="sm"
