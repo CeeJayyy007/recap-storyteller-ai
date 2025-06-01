@@ -1,0 +1,108 @@
+import { Task } from "@/types/task";
+
+export const mockTasks: Task[] = [
+  {
+    id: "1",
+    user_id: "user-1",
+    title: "Work on budget report for Q3",
+    description:
+      "Working on a budget report for the third quarter to analyze quarterly expenses and ensure budget adherence across all project areas. Need to compile data from various departments.",
+    status: "pending",
+    tags: ["Work"],
+    date: "2025-06-01",
+    linkedNoteId: null,
+    createdAt: "2025-06-01T10:24:00.000Z",
+    updatedAt: "2025-06-01T10:24:00.000Z",
+  },
+  {
+    id: "2",
+    user_id: "user-1",
+    title: "The Remarkable Story of...",
+    description:
+      "Read through the remarkable story about the new marketing strategy and document key insights. The story provides valuable perspective on our positioning.",
+    status: "pending",
+    tags: ["Reading"],
+    date: "2025-06-01",
+    linkedNoteId: "note-1",
+    createdAt: "2025-06-01T14:30:00.000Z",
+    updatedAt: "2025-06-01T14:30:00.000Z",
+  },
+  {
+    id: "3",
+    user_id: "user-1",
+    title: "Grocery shopping after work",
+    description:
+      "Grocery shopping after work can be a convenient way to ensure fresh supplies while maintaining work-life balance. Pick up ingredients for the week.",
+    status: "carried-over",
+    tags: ["Shopping"],
+    date: "2024-12-24",
+    linkedNoteId: null,
+    createdAt: "2024-12-24T16:45:00.000Z",
+    updatedAt: "2024-12-24T16:45:00.000Z",
+  },
+  {
+    id: "4",
+    user_id: "user-1",
+    title: "Implement user authentication system",
+    description:
+      "Build secure JWT-based authentication with login, register, and password reset functionality. Include role-based access control and session management.",
+    status: "completed",
+    tags: ["Frontend", "Backend", "Security"],
+    date: "2025-06-01",
+    linkedNoteId: "note-2",
+    createdAt: "2025-06-01T09:15:00.000Z",
+    updatedAt: "2025-06-01T18:30:00.000Z",
+  },
+  {
+    id: "5",
+    user_id: "user-1",
+    title: "Design database schema for user profiles",
+    description:
+      "Create comprehensive database schema for user profiles including personal information, preferences, settings, and activity tracking tables.",
+    status: "pending",
+    tags: ["Database", "Design"],
+    date: "2024-12-24",
+    linkedNoteId: null,
+    createdAt: "2024-12-24T11:20:00.000Z",
+    updatedAt: "2024-12-24T11:20:00.000Z",
+  },
+  {
+    id: "6",
+    user_id: "user-1",
+    title: "Fix responsive layout issues on mobile",
+    description:
+      "Address mobile responsiveness problems in the header navigation and sidebar components. Ensure proper touch targets and spacing.",
+    status: "carried-over",
+    tags: ["Frontend", "Mobile", "Bug"],
+    date: "2024-12-22",
+    linkedNoteId: null,
+    createdAt: "2024-12-22T15:30:00.000Z",
+    updatedAt: "2024-12-24T09:00:00.000Z",
+  },
+  {
+    id: "7",
+    user_id: "user-1",
+    title: "Code review for payment integration",
+    description:
+      "Review payment gateway integration code for security vulnerabilities and best practices. Test error handling and edge cases.",
+    status: "pending",
+    tags: ["Review", "Payment", "Security"],
+    date: "2024-12-24",
+    linkedNoteId: null,
+    createdAt: "2024-12-24T13:45:00.000Z",
+    updatedAt: "2024-12-24T13:45:00.000Z",
+  },
+  {
+    id: "8",
+    user_id: "user-1",
+    title: "Update API documentation",
+    description:
+      "Update comprehensive API documentation with new endpoints, request/response examples, and authentication requirements for the v2 release.",
+    status: "completed",
+    tags: ["Documentation", "API"],
+    date: "2024-12-23",
+    linkedNoteId: "note-1",
+    createdAt: "2024-12-23T16:00:00.000Z",
+    updatedAt: "2024-12-23T20:15:00.000Z",
+  },
+];

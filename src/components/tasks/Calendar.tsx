@@ -121,8 +121,17 @@ export function Calendar() {
     return date.toDateString() === selectedDate.toDateString();
   };
 
+  const isNextDayDisabled = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selected = new Date(selectedDate);
+    selected.setHours(0, 0, 0, 0);
+    return selected >= today;
+  };
+
   const hasTasksForDate = (date: Date) => {
-    return getTasksForDate(date).length > 0;
+    const dateString = date.toISOString().split("T")[0];
+    return getTasksForDate(dateString).length > 0;
   };
 
   const days = getDaysInMonth(currentMonth);
@@ -185,7 +194,8 @@ export function Calendar() {
             variant="outline"
             size="sm"
             onClick={handleNextDay}
-            className="h-8 w-8 p-0 hover:bg-background"
+            disabled={isNextDayDisabled()}
+            className="h-8 w-8 p-0 hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
