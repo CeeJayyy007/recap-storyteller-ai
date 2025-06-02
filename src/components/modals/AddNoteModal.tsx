@@ -64,7 +64,7 @@ export function AddNoteModal() {
       user_id: "user-1", // TODO: Get from auth context
       title: data.title,
       content: data.content,
-      date: selectedTask.date,
+      date: selectedTask.createdAt,
       linkedTaskIds: [selectedTask.id],
     });
 

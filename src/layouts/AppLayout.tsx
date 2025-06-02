@@ -18,7 +18,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex">
       <Sidebar
         userAvatar="/placeholder-avatar.jpg"
         userName="John Doe"
@@ -27,8 +27,8 @@ export function AppLayout({ children }: AppLayoutProps) {
       <Taskbar isVisible={isTaskbarVisible} />
       <main
         className={cn(
-          "pb-20 md:pb-0 min-h-screen transition-all duration-200",
-          isTaskbarVisible ? "md:ml-96" : "md:ml-16"
+          "pb-20 md:pb-0 min-h-screen transition-all duration-200 flex-1",
+          isTaskbarVisible ? "md:ml-[340px]" : "md:ml-5"
         )}
       >
         {children}

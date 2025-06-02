@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { getTaskStatusForDate } from "@/types/task";
+import { useEffect, useState } from "react";
 
 interface TaskCardProps {
   task: Task;
@@ -30,24 +32,22 @@ export function TaskCard({
   onDelete,
   selectedDate,
 }: TaskCardProps) {
-  const taskDateOnly = getDateOnly(task.date);
+  const [isHighlighted, setIsHighlighted] = useState(false);
   const selectedDateOnly = getDateOnly(selectedDate);
+  const selectedDateStr = selectedDateOnly.toISOString().split("T")[0];
 
-  const isCurrentDate = taskDateOnly.getTime() === selectedDateOnly.getTime();
-  const isPastDate = taskDateOnly.getTime() < selectedDateOnly.getTime();
+  // Calculate dynamic status for the selected date
+  const taskStatus = getTaskStatusForDate(task, selectedDateStr);
+  const isCompleted = taskStatus === "completed";
 
   const getCardStyles = () => {
-    switch (task.status) {
+    switch (taskStatus) {
       case "completed":
         return "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800";
+      case "carried-over":
+        return "bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800";
       case "pending":
-        if (task.status === "pending" && isPastDate) {
-          return "bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800";
-        } else if (task.status === "pending" && isCurrentDate) {
-          return "bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800";
-        } else {
-          return "bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800";
-        }
+        return "bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800";
       default:
         return "bg-gray-50 border-gray-200 dark:bg-gray-950 dark:border-gray-800";
     }
@@ -70,26 +70,65 @@ export function TaskCard({
     return colors[Math.abs(hash) % colors.length];
   };
 
+  const getCardFocusStyles = (status: string) => {
+    return status === "completed"
+      ? "ring-2 ring-green-500 ring-offset-1 scale-101"
+      : status === "carried-over"
+      ? "ring-2 ring-red-500 ring-offset-1 scale-101"
+      : status === "pending"
+      ? "ring-2 ring-orange-500 ring-offset-1 scale-101"
+      : "";
+  };
+
+  // Check for highlighting on mount
+  useEffect(() => {
+    const highlightTaskId = localStorage.getItem("highlightTaskId");
+    if (highlightTaskId === task.id) {
+      setIsHighlighted(true);
+      localStorage.removeItem("highlightTaskId");
+
+      // Scroll to this task
+      setTimeout(() => {
+        const element = document.getElementById(`task-${task.id}`);
+        element?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+
+      // Remove highlight after animation
+      setTimeout(() => {
+        setIsHighlighted(false);
+      }, 2000);
+    }
+  }, [task.id]);
+
   return (
     <div
+      id={`task-${task.id}`}
       className={cn(
-        "p-3 rounded-lg border-2 transition-colors",
-        getCardStyles()
+        "p-3 rounded-lg border-2 transition-all duration-300",
+        getCardStyles(),
+        isHighlighted && getCardFocusStyles(taskStatus)
       )}
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-start gap-2 min-w-0 flex-1">
           <Checkbox
-            checked={task.status === "completed"}
-            onCheckedChange={() => onToggleComplete(task.id)}
+            checked={isCompleted}
+            onCheckedChange={(checked) => {
+              console.log("Checkbox clicked:", {
+                taskId: task.id,
+                checked,
+                taskStatus,
+              });
+              onToggleComplete(task.id);
+            }}
             className="mt-0.5 flex-shrink-0"
+            disabled={false}
           />
           <h3
             className={cn(
               "font-medium text-sm leading-snug break-words line-clamp-1",
-              task.status === "completed" &&
-                "line-through text-muted-foreground"
+              isCompleted && "line-through text-muted-foreground"
             )}
           >
             {task.title}
@@ -109,11 +148,11 @@ export function TaskCard({
           <DropdownMenuContent align="start" className="w-40">
             <DropdownMenuItem onClick={() => onView(task)}>
               <Eye className="mr-2 h-4 w-4" />
-              View
+              View Task
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onEdit(task)}>
               <Edit className="mr-2 h-4 w-4" />
-              Edit
+              Edit Task
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onNote(task)}>
               <FileText className="mr-2 h-4 w-4" />
@@ -124,7 +163,7 @@ export function TaskCard({
               className="text-destructive focus:text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Delete
+              Delete Task
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -164,9 +203,9 @@ export function TaskCard({
           )}
         </div>
 
-        {/* Date */}
+        {/* Date - show creation date */}
         <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 ml-2">
-          {formatDate(task.date)}
+          {formatDate(task.createdAt.split("T")[0])}
         </span>
       </div>
     </div>

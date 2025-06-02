@@ -4,6 +4,8 @@ import {
   CheckCircle,
   CalendarIcon,
   RotateCw,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { Calendar } from "./Calendar";
 import { SearchInput } from "../common/SearchInput";
@@ -15,14 +17,17 @@ import { ModalContainer } from "../modals/ModalContainer";
 import { useModalStore } from "@/stores/modal-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useDateStore } from "@/stores/date-store";
+import { useTaskbarStore } from "@/stores/taskbar-store";
+import { getTaskStatusForDate, TaskStatus } from "@/types/task";
 
 interface TaskbarProps {
   isVisible: boolean;
 }
 
 export function Taskbar({ isVisible }: TaskbarProps) {
-  const { tasks, updateTask, deleteTask } = useTaskStore();
+  const { tasks, completeTask, uncompleteTask, deleteTask } = useTaskStore();
   const { selectedDate } = useDateStore();
+  const { sectionCollapsed, toggleSection } = useTaskbarStore();
   const {
     openAddTask,
     openViewTask,
@@ -31,17 +36,20 @@ export function Taskbar({ isVisible }: TaskbarProps) {
     openDeleteTask,
   } = useModalStore();
 
-  const handleSearch = (query: string) => {
-    // TODO: Implement search functionality
-    console.log("Searching for:", query);
-  };
+  // const handleSearch = (query: string) => {
+  //   // Search functionality is now handled by SearchModal
+  //   // This can be removed or kept for backward compatibility
+  // };
 
   const handleToggleComplete = (taskId: string) => {
     const task = tasks.find((t) => t.id === taskId);
     if (task) {
-      updateTask(taskId, {
-        status: task.status === "completed" ? "pending" : "completed",
-      });
+      if (task.completedAt) {
+        uncompleteTask(taskId);
+      } else {
+        // Complete with today's date (not selected date)
+        completeTask(taskId);
+      }
     }
   };
 
@@ -63,36 +71,24 @@ export function Taskbar({ isVisible }: TaskbarProps) {
 
   const getFilteredAndGroupedTasks = () => {
     const selectedDateStr = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
-    const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
-    const isToday = selectedDateStr === todayStr;
 
-    let filteredTasks: Task[];
+    // Get tasks that should be visible on the selected date
+    const visibleTasks = tasks.filter((task) => {
+      const status = getTaskStatusForDate(task, selectedDateStr);
+      return status !== null;
+    });
 
-    if (isToday) {
-      // For today: show all pending tasks + completed tasks from today
-      filteredTasks = tasks.filter((task) => {
-        return (
-          task.status === "pending" ||
-          (task.status === "completed" && task.date === selectedDateStr)
-        );
-      });
-    } else {
-      // For other dates: show only tasks from that specific date
-      filteredTasks = tasks.filter((task) => task.date === selectedDateStr);
-    }
-
-    // Group tasks by status
-    const carriedOverTasks = filteredTasks.filter(
-      (task) => task.status === "pending" && task.date < selectedDateStr
+    // Group tasks by their calculated status
+    const carriedOverTasks = visibleTasks.filter(
+      (task) => getTaskStatusForDate(task, selectedDateStr) === "carried-over"
     );
 
-    const pendingTasks = filteredTasks.filter(
-      (task) => task.status === "pending" && task.date === selectedDateStr
+    const pendingTasks = visibleTasks.filter(
+      (task) => getTaskStatusForDate(task, selectedDateStr) === "pending"
     );
 
-    const completedTasks = filteredTasks.filter(
-      (task) => task.status === "completed" && task.date === selectedDateStr
+    const completedTasks = visibleTasks.filter(
+      (task) => getTaskStatusForDate(task, selectedDateStr) === "completed"
     );
 
     return {
@@ -106,9 +102,12 @@ export function Taskbar({ isVisible }: TaskbarProps) {
     title: string,
     tasks: Task[],
     icon: React.ReactNode,
-    colorClass: string
+    colorClass: string,
+    sectionKey: "carriedOver" | "pending" | "completed"
   ) => {
     if (tasks.length === 0) return null;
+
+    const isCollapsed = sectionCollapsed[sectionKey];
 
     return (
       <div className="mb-6">
@@ -120,21 +119,38 @@ export function Taskbar({ isVisible }: TaskbarProps) {
           <span className="text-xs text-muted-foreground">
             ({tasks.length})
           </span>
+          {/* Collapse/Expand Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 ml-auto"
+            onClick={() => toggleSection(sectionKey)}
+          >
+            {isCollapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
         </div>
-        <div className="space-y-3">
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onToggleComplete={handleToggleComplete}
-              onView={handleView}
-              onEdit={handleEdit}
-              onNote={handleNote}
-              onDelete={handleDelete}
-              selectedDate={selectedDate.toISOString()}
-            />
-          ))}
-        </div>
+
+        {/* Conditionally render tasks based on collapse state */}
+        {!isCollapsed && (
+          <div className="space-y-3">
+            {tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onToggleComplete={handleToggleComplete}
+                onView={handleView}
+                onEdit={handleEdit}
+                onNote={handleNote}
+                onDelete={handleDelete}
+                selectedDate={selectedDate.toISOString()}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -154,8 +170,9 @@ export function Taskbar({ isVisible }: TaskbarProps) {
 
             <SearchInput
               placeholder="Search tasks..."
-              onSearch={handleSearch}
+              // onSearch={handleSearch}
             />
+
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-lg">Tasks</h2>
               <Button size="sm" className="h-8 w-8 p-0" onClick={openAddTask}>
@@ -172,7 +189,8 @@ export function Taskbar({ isVisible }: TaskbarProps) {
                 "Carried Over",
                 groupedTasks.carriedOver,
                 <RotateCw className="h-4 w-4 text-red-600 dark:text-red-400" />,
-                "border-red-200 dark:border-red-800"
+                "border-red-200 dark:border-red-800",
+                "carriedOver"
               )}
 
               {/* Pending Tasks */}
@@ -180,7 +198,8 @@ export function Taskbar({ isVisible }: TaskbarProps) {
                 "Pending",
                 groupedTasks.pending,
                 <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />,
-                "border-orange-200 dark:border-orange-800"
+                "border-orange-200 dark:border-orange-800",
+                "pending"
               )}
 
               {/* Completed Tasks */}
@@ -188,7 +207,8 @@ export function Taskbar({ isVisible }: TaskbarProps) {
                 "Completed",
                 groupedTasks.completed,
                 <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />,
-                "border-green-200 dark:border-green-800"
+                "border-green-200 dark:border-green-800",
+                "completed"
               )}
 
               {/* Empty State */}

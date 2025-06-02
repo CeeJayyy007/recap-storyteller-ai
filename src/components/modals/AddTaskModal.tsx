@@ -49,8 +49,8 @@ const formSchema = z.object({
   description: z.string().optional(),
   linkedNoteId: z.string().optional(),
   tags: z.array(z.string()).default([]),
-  date: z.date({
-    required_error: "Please select a date for the task",
+  createdAt: z.date({
+    required_error: "Please select a creation date for the task",
   }),
 });
 
@@ -76,24 +76,15 @@ export function AddTaskModal() {
       description: "",
       linkedNoteId: "",
       tags: [],
-      date: selectedDate,
+      createdAt: selectedDate,
     },
   });
 
   useEffect(() => {
-    form.setValue("date", selectedDate);
+    form.setValue("createdAt", selectedDate);
   }, [selectedDate, form]);
 
   const onSubmit = async (data: FormData) => {
-    const newTask = addTask({
-      user_id: "user-1", // TODO: Get from auth context
-      title: data.title,
-      description: data.description || "",
-      status: "pending",
-      tags: selectedTags,
-      date: format(data.date, "yyyy-MM-dd"),
-      linkedNoteId: data.linkedNoteId || null,
-    });
 
     // If a note is linked, we could open it here
     if (data.linkedNoteId) {
@@ -167,10 +158,10 @@ export function AddTaskModal() {
 
             <FormField
               control={form.control}
-              name="date"
+              name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Date *</FormLabel>
+                  <FormLabel>Creation Date *</FormLabel>
                   <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>

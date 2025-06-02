@@ -53,12 +53,12 @@ import { format, parseISO } from "date-fns";
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  status: z.enum(["pending", "completed", "carried-over"]),
   linkedNoteId: z.string().optional(),
   tags: z.array(z.string()).default([]),
-  date: z.date({
-    required_error: "Please select a date for the task",
+  createdAt: z.date({
+    required_error: "Please select a creation date",
   }),
+  completedAt: z.date().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -80,10 +80,10 @@ export function EditTaskModal() {
     defaultValues: {
       title: "",
       description: "",
-      status: "pending",
       linkedNoteId: "",
       tags: [],
-      date: new Date(),
+      createdAt: new Date(),
+      completedAt: undefined,
     },
   });
 
@@ -93,9 +93,13 @@ export function EditTaskModal() {
       form.reset({
         title: selectedTask.title,
         description: selectedTask.description,
-        status: selectedTask.status,
         linkedNoteId: selectedTask.linkedNoteId || "",
-        date: selectedTask.date ? parseISO(selectedTask.date) : new Date(),
+        createdAt: selectedTask.createdAt
+          ? parseISO(selectedTask.createdAt)
+          : new Date(),
+        completedAt: selectedTask.completedAt
+          ? parseISO(selectedTask.completedAt)
+          : undefined,
       });
       setSelectedTags(selectedTask.tags);
     }
@@ -107,9 +111,9 @@ export function EditTaskModal() {
     updateTask(selectedTask.id, {
       title: data.title,
       description: data.description || "",
-      status: data.status,
       tags: selectedTags,
-      date: format(data.date, "yyyy-MM-dd"),
+      createdAt: data.createdAt.toISOString(),
+      completedAt: data.completedAt?.toISOString(),
       linkedNoteId: data.linkedNoteId || null,
     });
 
@@ -178,10 +182,10 @@ export function EditTaskModal() {
 
             <FormField
               control={form.control}
-              name="date"
+              name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Date *</FormLabel>
+                  <FormLabel>Creation Date *</FormLabel>
                   <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -223,25 +227,44 @@ export function EditTaskModal() {
 
             <FormField
               control={form.control}
-              name="status"
+              name="completedAt"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="carried-over">Carried Over</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <FormItem className="flex flex-col">
+                  <FormLabel>Completion Date (Optional)</FormLabel>
+                  <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsDateOpen(false);
+                        }}
+                        disabled={(date) =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0))
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}

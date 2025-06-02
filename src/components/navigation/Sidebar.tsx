@@ -45,10 +45,10 @@ const navigationItems: NavigationItem[] = [
     key: "dashboard",
   },
   {
-    href: "/tasks",
+    href: "/notes",
     icon: Edit3,
-    label: "Tasks",
-    key: "tasks",
+    label: "Notes",
+    key: "notes",
   },
   {
     href: "/calendar",
@@ -153,7 +153,7 @@ export function Sidebar({
         <div className="mb-6">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative w-14 h-14 rounded-lg hover:ring-2 hover:ring-primary transition-all duration-200 group">
+              <button className="relative w-14 h-14 rounded-lg  transition-all duration-200 group">
                 <div
                   className="w-full h-full relative"
                   style={{

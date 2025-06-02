@@ -1,22 +1,22 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useModalStore } from "@/stores/modal-store";
 
 interface SearchInputProps {
-  onSearch?: (query: string) => void;
   placeholder?: string;
 }
 
 export function SearchInput({
-  onSearch,
   placeholder = "Search tasks",
 }: SearchInputProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { openSearch } = useModalStore();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    onSearch?.(query);
+  const handleFocus = () => {
+    openSearch();
+  };
+
+  const handleClick = () => {
+    openSearch();
   };
 
   return (
@@ -25,9 +25,10 @@ export function SearchInput({
       <Input
         type="text"
         placeholder={placeholder}
-        value={searchQuery}
-        onChange={handleInputChange}
-        className="pl-10 bg-muted/50 focus-visible:ring-1 focus-visible:ring-ring"
+        onFocus={handleFocus}
+        onClick={handleClick}
+        readOnly
+        className="pl-10 bg-muted/50 focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
       />
     </div>
   );

@@ -5,9 +5,11 @@ import { mockTasks } from "@/data/mockTasks";
 
 interface TaskState {
   tasks: Task[];
-  addTask: (task: Omit<Task, "id" | "createdAt" | "updatedAt">) => void;
+  addTask: (task: Omit<Task, "id" | "createdAt" | "updatedAt">) => Task;
   updateTask: (id: string, updates: Partial<Omit<Task, "id">>) => void;
   deleteTask: (id: string) => void;
+  completeTask: (id: string, completionDate?: string) => void;
+  uncompleteTask: (id: string) => void;
   getTasksForDate: (date: string) => Task[];
   getTasksForDateRange: (startDate: string, endDate: string) => Task[];
   getTaskById: (id: string) => Task | undefined;
@@ -47,14 +49,52 @@ export const useTaskStore = create<TaskState>()(
         }));
       },
 
+      completeTask: (id, completionDate) => {
+        const completedAt = completionDate 
+          ? new Date(completionDate).toISOString()
+          : new Date().toISOString();
+          
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id
+              ? { ...task, completedAt, updatedAt: new Date().toISOString() }
+              : task
+          ),
+        }));
+      },
+
+      uncompleteTask: (id) => {
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id
+              ? { ...task, completedAt: undefined, updatedAt: new Date().toISOString() }
+              : task
+          ),
+        }));
+      },
+
       getTasksForDate: (date) => {
-        return get().tasks.filter((task) => task.date === date);
+        const { tasks } = get();
+        return tasks.filter((task) => {
+          const createdDate = task.createdAt.split('T')[0];
+          const completedDate = task.completedAt ? task.completedAt.split('T')[0] : null;
+          
+          // Show task if it was created on or before this date
+          // and either not completed or completed on or after this date
+          return createdDate <= date && (!completedDate || completedDate >= date);
+        });
       },
 
       getTasksForDateRange: (startDate, endDate) => {
         const { tasks } = get();
         return tasks.filter((task) => {
-          return task.date >= startDate && task.date <= endDate;
+          const createdDate = task.createdAt.split('T')[0];
+          const completedDate = task.completedAt ? task.completedAt.split('T')[0] : null;
+          
+          // Task overlaps with date range if:
+          // - Created before or during range AND
+          // - Not completed OR completed during or after range start
+          return createdDate <= endDate && (!completedDate || completedDate >= startDate);
         });
       },
 
