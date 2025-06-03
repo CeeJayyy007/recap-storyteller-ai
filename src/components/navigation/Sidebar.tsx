@@ -118,8 +118,26 @@ export function Sidebar({
 
   const getActiveKey = () => {
     const path = location.pathname;
+
+    // Check for exact dashboard match first
     if (path === "/dashboard") return "dashboard";
-    return path.slice(1); // Remove leading slash
+
+    // Check if path starts with any navigation item href
+    for (const item of navigationItems) {
+      if (path.startsWith(item.href)) {
+        return item.key;
+      }
+    }
+
+    // Check footer navigation items
+    for (const item of navigationFooterItems) {
+      if (path.startsWith(item.href)) {
+        return item.key;
+      }
+    }
+
+    // Fallback to the original behavior
+    return path.slice(1);
   };
 
   const handleProfileMenuAction = (action: string) => {

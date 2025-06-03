@@ -7,6 +7,9 @@ import {
   FileTextIcon,
   ClockIcon,
   StarIcon,
+  CheckCircleIcon,
+  NotebookPenIcon,
+  File,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,10 +24,11 @@ import {
 } from "@/lib/dashboard-utils";
 import { getTaskStatusForDate } from "@/types/task";
 import { formatDate } from "@/lib/utils";
+import { NotesCard } from "@/components/notes/NotesCard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { tasks, toggleTaskCompletion } = useTaskStore();
+  const { tasks } = useTaskStore();
   const { notes } = useNoteStore();
 
   const today = new Date().toISOString().split("T")[0];
@@ -135,17 +139,19 @@ const Dashboard = () => {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">{getTimeBasedGreeting()}, Jay!</h1>
         <p className="text-muted-foreground">{getMotivationalText()}</p>
-        <p className="text-sm text-muted-foreground">{getStatsText()}</p>
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* My Projects */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">My projects</CardTitle>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        {/* My Projects - 2 columns */}
+        <Card className="lg:col-span-3 border-none">
+          <CardHeader className="flex flex-row items-center p-0 py-4">
+            <CardTitle className="text-lg flex items-center gap-2 text-muted-foreground">
+              <FolderIcon className="h-5 w-5" />
+              My projects
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-0">
             <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center space-y-4">
               <FolderIcon className="h-12 w-12 mx-auto text-muted-foreground/50" />
               <div className="space-y-2">
@@ -159,19 +165,26 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* My Tasks */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">My tasks</CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/tasks")}
-            >
-              View all
-            </Button>
+        {/* My Tasks - 3 columns */}
+        <Card className="lg:col-span-2 border-none">
+          <CardHeader className="flex flex-col p-0 py-4 text-muted-foreground">
+            <div className="flex justify-between items-center p-0">
+              <CardTitle className="text-lg flex items-center gap-2 p-0">
+                <CheckCircleIcon className="h-5 w-5" />
+                My tasks
+              </CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7"
+                onClick={() => navigate("/tasks")}
+              >
+                View all
+              </Button>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 border border-muted-foreground/25 rounded-lg p-6">
+            <p className="text-sm text-muted-foreground">{getStatsText()}</p>
             {recentTasks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <p>No tasks for today</p>
@@ -193,15 +206,11 @@ const Dashboard = () => {
                 return (
                   <div
                     key={task.id}
-                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50"
+                    className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 border border-muted-foreground/25"
                   >
-                    <Checkbox
-                      checked={isCompleted}
-                      onCheckedChange={() => toggleTaskCompletion(task.id)}
-                    />
                     <div className="flex-1 min-w-0">
                       <p
-                        className={`text-sm ${
+                        className={`text-sm line-clamp-1 ${
                           isCompleted
                             ? "line-through text-muted-foreground"
                             : ""
@@ -238,21 +247,25 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* My Notes */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">My notes</CardTitle>
+        {/* My Notes - 2 columns */}
+        <Card className="lg:col-span-3 border-none">
+          <CardHeader className="flex flex-row items-center justify-between p-0 py-3 text-muted-foreground">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <File className="h-5 w-5" />
+              My notes
+            </CardTitle>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
+              className="h-7"
               onClick={() => navigate("/notes")}
             >
               View all
             </Button>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 px-0">
             {noteStats.recent.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-muted-foreground/15">
                 <p>No notes yet</p>
                 <Button
                   variant="outline"
@@ -266,43 +279,36 @@ const Dashboard = () => {
               </div>
             ) : (
               noteStats.recent.map((note) => (
-                <div
-                  key={note.id}
-                  className="p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                  onClick={() => navigate(`/notes/${note.id}`)}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="text-sm font-medium line-clamp-1">
-                      {note.title || "Untitled Note"}
-                    </h4>
-                    <Badge variant="secondary" className="text-xs ml-2">
-                      {note.date}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDate(note.updatedAt)}
-                  </p>
-                  {note.linkedTaskIds.length > 0 && (
-                    <Badge variant="outline" className="text-xs mt-1">
-                      {note.linkedTaskIds.length} linked task
-                      {note.linkedTaskIds.length > 1 ? "s" : ""}
-                    </Badge>
-                  )}
+                <div className="flex w-80" key={note.id}>
+                  <NotesCard
+                    note={note}
+                    onView={() => navigate(`/notes/${note.id}`)}
+                    onEdit={() => navigate(`/notes/${note.id}/edit`)}
+                    onAddTask={() =>
+                      navigate(`/tasks/${note.linkedTaskIds[0]}`)
+                    }
+                  />
                 </div>
               ))
             )}
           </CardContent>
         </Card>
 
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Recent activity</CardTitle>
+        {/* Recent Activity - 3 columns */}
+        <Card className="lg:col-span-2 border-none">
+          <CardHeader className="p-0 py-4">
+            <CardTitle className="text-lg flex items-center gap-2 text-muted-foreground">
+              <ClockIcon className="h-5 w-5" />
+              Recent activity
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3 border border-muted-foreground/25 rounded-lg p-6 ">
             <div className="space-y-4">
               {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-3">
+                <div
+                  key={activity.id}
+                  className="flex items-start space-x-3 border-b border-muted-foreground/10 pb-4 last:border-b-0"
+                >
                   <div className="flex-shrink-0 w-8 h-8 bg-muted rounded-full flex items-center justify-center text-sm">
                     {activity.icon}
                   </div>

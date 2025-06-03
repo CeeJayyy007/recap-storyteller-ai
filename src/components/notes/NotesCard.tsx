@@ -27,48 +27,72 @@ interface NotesCardProps {
   onView: (note: Note) => void;
   onEdit: (note: Note) => void;
   onAddTask: (note: Note) => void;
-  onDelete: (note: Note) => void;
 }
 
-export function NotesCard({
-  note,
-  onView,
-  onEdit,
-  onAddTask,
-  onDelete,
-}: NotesCardProps) {
+export function NotesCard({ note, onView, onEdit, onAddTask }: NotesCardProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { openAddTaskToNote } = useModalStore();
+  const { openAddTaskToNote, openDeleteNote } = useModalStore();
 
   // Extract text content from Yoopta or string content
-  const getContentPreview = (content: any): string => {
-    if (typeof content === "string") {
-      return content.slice(0, 150) + (content.length > 150 ? "..." : "");
-    }
+  const getContentPreview = (content: unknown): string => {
+    try {
+      if (typeof content === "string") {
+        return content.slice(0, 150) + (content.length > 150 ? "..." : "");
+      }
 
-    // Handle Yoopta content
-    if (content && typeof content === "object") {
-      let textContent = "";
-      Object.values(content).forEach((block: any) => {
-        if (block.value) {
-          block.value.forEach((element: any) => {
-            if (element.children) {
-              element.children.forEach((child: any) => {
-                if (child.text) {
-                  textContent += child.text + " ";
+      // Handle Yoopta content
+      if (content && typeof content === "object") {
+        let textContent = "";
+
+        // Yoopta content is typically an object with UUID keys
+        Object.values(content).forEach((block: unknown) => {
+          if (block && typeof block === "object" && block !== null) {
+            const blockObj = block as Record<string, unknown>;
+
+            // Check for Yoopta block structure
+            if (blockObj.value && Array.isArray(blockObj.value)) {
+              blockObj.value.forEach((element: unknown) => {
+                if (
+                  element &&
+                  typeof element === "object" &&
+                  element !== null
+                ) {
+                  const elementObj = element as Record<string, unknown>;
+
+                  if (
+                    elementObj.children &&
+                    Array.isArray(elementObj.children)
+                  ) {
+                    elementObj.children.forEach((child: unknown) => {
+                      if (
+                        child &&
+                        typeof child === "object" &&
+                        child !== null
+                      ) {
+                        const childObj = child as Record<string, unknown>;
+                        if (typeof childObj.text === "string") {
+                          textContent += childObj.text + " ";
+                        }
+                      }
+                    });
+                  }
                 }
               });
             }
-          });
-        }
-      });
-      return (
-        textContent.trim().slice(0, 150) +
-        (textContent.length > 150 ? "..." : "")
-      );
-    }
+          }
+        });
 
-    return "Rich content note...";
+        const trimmed = textContent.trim();
+        if (trimmed.length > 0) {
+          return trimmed.slice(0, 150) + (trimmed.length > 150 ? "..." : "");
+        }
+      }
+
+      return "No content available";
+    } catch (error) {
+      console.warn("Error parsing note content:", error);
+      return "Unable to preview content";
+    }
   };
 
   // Extract tags from content or use a default set
@@ -96,6 +120,12 @@ export function NotesCard({
   const handleLinkTasks = (e: React.MouseEvent) => {
     e.stopPropagation();
     openAddTaskToNote(note);
+    setIsDropdownOpen(false);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openDeleteNote(note);
     setIsDropdownOpen(false);
   };
 
@@ -148,11 +178,7 @@ export function NotesCard({
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(note);
-                setIsDropdownOpen(false);
-              }}
+              onClick={handleDelete}
               className="text-red-600 dark:text-red-400"
             >
               <Trash2 className="h-4 w-4 mr-2" />
