@@ -121,13 +121,13 @@ export function Calendar() {
     return date.toDateString() === selectedDate.toDateString();
   };
 
-  const isNextDayDisabled = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const selected = new Date(selectedDate);
-    selected.setHours(0, 0, 0, 0);
-    return selected >= today;
-  };
+  // const isNextDayDisabled = () => {
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
+  //   const selected = new Date(selectedDate);
+  //   selected.setHours(0, 0, 0, 0);
+  //   return selected >= today;
+  // };
 
   const hasTasksForDate = (date: Date) => {
     const dateString = date.toISOString().split("T")[0];
@@ -139,7 +139,7 @@ export function Calendar() {
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
-      setIsOpen(false); // Auto-close modal
+      setIsOpen(false);
     }
   };
 
@@ -194,7 +194,7 @@ export function Calendar() {
             variant="outline"
             size="sm"
             onClick={handleNextDay}
-            disabled={isNextDayDisabled()}
+            // disabled={isNextDayDisabled()}
             className="h-8 w-8 p-0 hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight className="h-4 w-4" />

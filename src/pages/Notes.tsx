@@ -46,7 +46,7 @@ const Notes = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Container with max width */}
-      <div className="container mx-auto max-w-7xl px-4 py-6">
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>

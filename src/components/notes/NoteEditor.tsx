@@ -301,13 +301,13 @@ export function NoteEditor() {
     <div className="h-screen flex flex-col">
       {/* Fixed Header */}
       <div className="sticky top-0 z-10 bg-background">
-        <NotesHeader note={note} onDelete={handleDelete} />
+        <NotesHeader note={note} />
       </div>
 
       {/* Scrollable Editor Content */}
       <div className="flex-1 overflow-auto">
         <div className="container mx-auto px-4 py-6">
-          <div className="bg-white dark:bg-slate-800 min-h-full rounded-lg shadow-sm">
+          <div className="bg-white dark:bg-transparent min-h-full shadow-sm">
             <div className="px-6 py-4">
               <YooptaEditor
                 editor={editor}

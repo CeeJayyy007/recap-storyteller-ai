@@ -13,6 +13,7 @@ import {
   Menu,
   Sun,
   Moon,
+  ListRestart,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -57,11 +58,17 @@ const navigationItems: NavigationItem[] = [
     key: "calendar",
   },
   {
-    href: "/vault",
-    icon: Archive,
-    label: "Vault",
-    key: "vault",
+    href: "/recap",
+    icon: ListRestart,
+    label: "Recap",
+    key: "recap",
   },
+  // {
+  //   href: "/vault",
+  //   icon: Archive,
+  //   label: "Vault",
+  //   key: "vault",
+  // },
 ];
 
 const navigationFooterItems: NavigationItem[] = [

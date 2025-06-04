@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Task } from "@/types/task";
+import { Task, getTaskStatusForDate } from "@/types/task";
 import { mockTasks } from "@/data/mockTasks";
 
 interface TaskState {
@@ -36,7 +36,7 @@ export const useTaskStore = create<TaskState>()(
       updateTask: (id, updates) => {
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id 
+            task.id === id
               ? { ...task, ...updates, updatedAt: new Date().toISOString() }
               : task
           ),
@@ -50,10 +50,10 @@ export const useTaskStore = create<TaskState>()(
       },
 
       completeTask: (id, completionDate) => {
-        const completedAt = completionDate 
+        const completedAt = completionDate
           ? new Date(completionDate).toISOString()
           : new Date().toISOString();
-          
+
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === id
@@ -67,7 +67,11 @@ export const useTaskStore = create<TaskState>()(
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === id
-              ? { ...task, completedAt: undefined, updatedAt: new Date().toISOString() }
+              ? {
+                  ...task,
+                  completedAt: undefined,
+                  updatedAt: new Date().toISOString(),
+                }
               : task
           ),
         }));
@@ -76,25 +80,26 @@ export const useTaskStore = create<TaskState>()(
       getTasksForDate: (date) => {
         const { tasks } = get();
         return tasks.filter((task) => {
-          const createdDate = task.createdAt.split('T')[0];
-          const completedDate = task.completedAt ? task.completedAt.split('T')[0] : null;
-          
-          // Show task if it was created on or before this date
-          // and either not completed or completed on or after this date
-          return createdDate <= date && (!completedDate || completedDate >= date);
+          const status = getTaskStatusForDate(task, date);
+          return status !== null;
         });
       },
 
       getTasksForDateRange: (startDate, endDate) => {
         const { tasks } = get();
         return tasks.filter((task) => {
-          const createdDate = task.createdAt.split('T')[0];
-          const completedDate = task.completedAt ? task.completedAt.split('T')[0] : null;
-          
+          const createdDate = task.createdAt.split("T")[0];
+          const completedDate = task.completedAt
+            ? task.completedAt.split("T")[0]
+            : null;
+
           // Task overlaps with date range if:
           // - Created before or during range AND
           // - Not completed OR completed during or after range start
-          return createdDate <= endDate && (!completedDate || completedDate >= startDate);
+          return (
+            createdDate <= endDate &&
+            (!completedDate || completedDate >= startDate)
+          );
         });
       },
 
@@ -106,7 +111,11 @@ export const useTaskStore = create<TaskState>()(
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === taskId
-              ? { ...task, linkedNoteId: noteId, updatedAt: new Date().toISOString() }
+              ? {
+                  ...task,
+                  linkedNoteId: noteId,
+                  updatedAt: new Date().toISOString(),
+                }
               : task
           ),
         }));
@@ -116,7 +125,11 @@ export const useTaskStore = create<TaskState>()(
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === taskId
-              ? { ...task, linkedNoteId: null, updatedAt: new Date().toISOString() }
+              ? {
+                  ...task,
+                  linkedNoteId: null,
+                  updatedAt: new Date().toISOString(),
+                }
               : task
           ),
         }));

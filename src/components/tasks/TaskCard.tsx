@@ -33,12 +33,20 @@ export function TaskCard({
   selectedDate,
 }: TaskCardProps) {
   const [isHighlighted, setIsHighlighted] = useState(false);
-  const selectedDateOnly = getDateOnly(selectedDate);
-  const selectedDateStr = selectedDateOnly.toISOString().split("T")[0];
+  const selectedDateStr = selectedDate.split("T")[0]; // YYYY-MM-DD
 
   // Calculate dynamic status for the selected date
   const taskStatus = getTaskStatusForDate(task, selectedDateStr);
   const isCompleted = taskStatus === "completed";
+
+  // Debug logging to verify the fix
+  console.log("TaskCard Debug:", {
+    taskId: task.id,
+    taskTitle: task.title,
+    selectedDateStr,
+    taskStatus,
+    taskCreatedAt: task.createdAt.split("T")[0],
+  });
 
   const getCardStyles = () => {
     switch (taskStatus) {

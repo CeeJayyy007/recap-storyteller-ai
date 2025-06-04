@@ -134,7 +134,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 container">
+    <div className="px-6 py-8 space-y-6 container">
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">{getTimeBasedGreeting()}, Jay!</h1>

@@ -7,6 +7,7 @@ import { SearchModal } from "./SearchModal";
 import { AddTaskToNoteModal } from "./AddTaskToNoteModal";
 import { DeleteNoteModal } from "./DeleteNoteModal";
 import { NoteInfoModal } from "./NoteInfoModal";
+import { DateModal } from "../calendar/DateModal";
 
 export function ModalContainer() {
   return (
@@ -20,6 +21,7 @@ export function ModalContainer() {
       <AddTaskToNoteModal />
       <DeleteNoteModal />
       <NoteInfoModal />
+      <DateModal />
     </>
   );
 }

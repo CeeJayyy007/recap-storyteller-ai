@@ -11,8 +11,10 @@ interface ModalState {
   isDeleteNoteOpen: boolean;
   isAddTaskToNoteOpen: boolean;
   isNoteInfoOpen: boolean;
+  isDateModalOpen: boolean;
   selectedTask: Task | null;
   selectedNote: Note | null;
+  selectedDate: string | null; // YYYY-MM-DD format
   isSearchOpen: boolean;
   searchQuery: string;
   searchResults: Task[];
@@ -31,6 +33,8 @@ interface ModalState {
   closeDeleteNote: () => void;
   openAddTaskToNote: (note: Note) => void;
   closeAddTaskToNote: () => void;
+  openDateModal: (date: string) => void;
+  closeDateModal: () => void;
   closeAllModals: () => void;
   openSearch: () => void;
   closeSearch: () => void;
@@ -49,8 +53,10 @@ export const useModalStore = create<ModalState>((set) => ({
   isDeleteNoteOpen: false,
   isAddTaskToNoteOpen: false,
   isNoteInfoOpen: false,
+  isDateModalOpen: false,
   selectedTask: null,
   selectedNote: null,
+  selectedDate: null,
   isSearchOpen: false,
   searchQuery: "",
   searchResults: [],
@@ -81,6 +87,9 @@ export const useModalStore = create<ModalState>((set) => ({
   openNoteInfo: (note) => set({ isNoteInfoOpen: true, selectedNote: note }),
   closeNoteInfo: () => set({ isNoteInfoOpen: false, selectedNote: null }),
 
+  openDateModal: (date) => set({ isDateModalOpen: true, selectedDate: date }),
+  closeDateModal: () => set({ isDateModalOpen: false, selectedDate: null }),
+
   closeAllModals: () =>
     set({
       isAddTaskOpen: false,
@@ -91,8 +100,10 @@ export const useModalStore = create<ModalState>((set) => ({
       isDeleteNoteOpen: false,
       isAddTaskToNoteOpen: false,
       isNoteInfoOpen: false,
+      isDateModalOpen: false,
       selectedTask: null,
       selectedNote: null,
+      selectedDate: null,
     }),
   openSearch: () => set({ isSearchOpen: true }),
   closeSearch: () =>

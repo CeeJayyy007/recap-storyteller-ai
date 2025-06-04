@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Notes from "./pages/Notes";
 import Calendar from "./pages/Calendar";
+import Recap from "./pages/Recap";
 import Vault from "./pages/Vault";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -47,6 +48,14 @@ const App = () => (
             element={
               <AppLayout>
                 <Calendar />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/recap"
+            element={
+              <AppLayout>
+                <Recap />
               </AppLayout>
             }
           />

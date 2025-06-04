@@ -23,6 +23,16 @@ export const getTaskStatusForDate = (
     ? task.completedAt.split("T")[0]
     : null;
 
+  // Get today's date in YYYY-MM-DD format, ensuring consistent timezone handling
+  const today = new Date();
+  const currentDate = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  )
+    .toISOString()
+    .split("T")[0];
+
   // Don't show task before its creation date
   if (viewingDate < createdDate) return null;
 
@@ -35,9 +45,11 @@ export const getTaskStatusForDate = (
   // On creation date (and not completed), show as pending
   if (viewingDate === createdDate && !completedDate) return "pending";
 
-  // After creation date but before completion (or never completed), show as carried-over
+  // After creation date but not beyond today (and not completed), show as carried-over
+  // This ensures carried-over tasks don't show in future dates
   if (
     viewingDate > createdDate &&
+    viewingDate <= currentDate &&
     (!completedDate || viewingDate < completedDate)
   )
     return "carried-over";
