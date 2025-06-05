@@ -47,7 +47,7 @@ export function OnboardingContainer() {
       <SplashScreen
         isVisible={showSplashScreen}
         onComplete={handleSplashComplete}
-        duration={3000}
+        duration={5000}
       />
 
       <OnboardingFlow

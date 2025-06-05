@@ -11,7 +11,7 @@ interface SplashScreenProps {
 export function SplashScreen({
   isVisible,
   onComplete,
-  duration = 3000,
+  duration = 50000,
 }: SplashScreenProps) {
   const [showTagline, setShowTagline] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -27,7 +27,7 @@ export function SplashScreen({
       setIsExiting(true);
       setTimeout(() => {
         onComplete?.();
-      }, 500);
+      }, 5000);
     }, duration);
 
     return () => {
@@ -89,8 +89,15 @@ export function SplashScreen({
               />
 
               {/* Logo */}
-              <div className="w-24 h-24 md:w-32 md:h-32 p-4 bg-white dark:bg-slate-800 rounded-full shadow-2xl">
-                <Logo className="w-full h-full text-blue-600 dark:text-blue-400" />
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-white dark:bg-slate-800 rounded-full shadow-2xl flex items-center justify-center">
+                <div className="relative">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-xl transform rotate-3">
+                    <span className="text-white font-bold text-2xl md:text-3xl font-space">
+                      R
+                    </span>
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
+                </div>
               </div>
             </motion.div>
 

@@ -56,7 +56,7 @@ export const useOnboardingStore = create<OnboardingState>()(
             showOnboardingFlow: !hasSeenOnboarding,
             isAppLoading: false,
           });
-        }, 3000);
+        }, 5000);
       },
     }),
     {
