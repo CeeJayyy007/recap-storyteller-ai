@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Plus,
   CheckCircle,
@@ -145,120 +146,130 @@ export function DateModal() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto space-y-6">
-          {/* Tasks by Status */}
-          {(["completed", "pending", "carried-over"] as const).map((status) => {
-            const statusTasks = tasksByStatus[status] || [];
-            if (statusTasks.length === 0) return null;
+        <ScrollArea className="h-[600px] w-full">
+          <div className="space-y-6 pr-4">
+            {/* Tasks by Status */}
+            {(["completed", "pending", "carried-over"] as const).map(
+              (status) => {
+                const statusTasks = tasksByStatus[status] || [];
+                if (statusTasks.length === 0) return null;
 
-            return (
-              <div key={status} className="space-y-3">
-                <div className="flex items-center gap-2">
-                  {getStatusIcon(status)}
-                  <h3 className={cn("font-semibold", getStatusColor(status))}>
-                    {getStatusLabel(status)}
-                  </h3>
-                  <Badge variant="secondary" className="text-xs">
-                    {statusTasks.length}
-                  </Badge>
-                </div>
+                return (
+                  <div key={status} className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(status)}
+                      <h3
+                        className={cn("font-semibold", getStatusColor(status))}
+                      >
+                        {getStatusLabel(status)}
+                      </h3>
+                      <Badge variant="secondary" className="text-xs">
+                        {statusTasks.length}
+                      </Badge>
+                    </div>
 
-                <div className="space-y-2">
-                  {statusTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className={cn(
-                        "p-3 rounded-lg border bg-card transition-colors cursor-pointer",
-                        getCardStyles(status)
-                      )}
-                    >
-                      <h4 className="font-medium">{task.title}</h4>
-                      {task.description && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {task.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 mt-2 justify-between">
-                        {task.tags.length > 0 && (
-                          <div className="flex gap-1">
-                            {task.tags.slice(0, 2).map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                            {task.tags.length > 2 && (
-                              <span className="text-xs text-muted-foreground">
-                                +{task.tags.length - 2} more
-                              </span>
+                    <div className="space-y-2">
+                      {statusTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          className={cn(
+                            "p-3 rounded-lg border bg-card transition-colors cursor-pointer",
+                            getCardStyles(status)
+                          )}
+                        >
+                          <h4 className="font-medium">{task.title}</h4>
+                          {task.description && (
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {task.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-2 mt-2 justify-between">
+                            {task.tags.length > 0 && (
+                              <div className="flex gap-1">
+                                {task.tags.slice(0, 2).map((tag) => (
+                                  <Badge
+                                    key={tag}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
+                                    {tag}
+                                  </Badge>
+                                ))}
+                                {task.tags.length > 2 && (
+                                  <span className="text-xs text-muted-foreground">
+                                    +{task.tags.length - 2} more
+                                  </span>
+                                )}
+                              </div>
                             )}
+                            <span className="text-xs text-muted-foreground">
+                              Created:{" "}
+                              {format(new Date(task.createdAt), "h:mm a")}
+                            </span>
                           </div>
-                        )}
-                        <span className="text-xs text-muted-foreground">
-                          Created: {format(new Date(task.createdAt), "h:mm a")}
-                        </span>
-                      </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+                  </div>
+                );
+              }
+            )}
 
-          {/* Notes */}
-          {notes.length > 0 && (
-            <>
-              {tasks.length > 0 && <Separator />}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                  <h3 className="font-semibold text-purple-700 dark:text-purple-300">
-                    Notes
-                  </h3>
-                  <Badge variant="secondary" className="text-xs">
-                    {notes.length}
-                  </Badge>
-                </div>
+            {/* Notes */}
+            {notes.length > 0 && (
+              <>
+                {tasks.length > 0 && <Separator />}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                    <h3 className="font-semibold text-purple-700 dark:text-purple-300">
+                      Notes
+                    </h3>
+                    <Badge variant="secondary" className="text-xs">
+                      {notes.length}
+                    </Badge>
+                  </div>
 
-                <div className="space-y-2">
-                  {notes.map((note) => (
-                    <div
-                      key={note.id}
-                      className="p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-                    >
-                      <h4 className="font-medium">
-                        {note.title || "Untitled Note"}
-                      </h4>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs text-muted-foreground">
-                          Created: {format(new Date(note.createdAt), "h:mm a")}
-                        </span>
-                        {note.linkedTaskIds.length > 0 && (
-                          <Badge variant="outline" className="text-xs">
-                            {note.linkedTaskIds.length} linked task
-                            {note.linkedTaskIds.length > 1 ? "s" : ""}
-                          </Badge>
-                        )}
+                  <div className="space-y-2">
+                    {notes.map((note) => (
+                      <div
+                        key={note.id}
+                        className="p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer"
+                      >
+                        <h4 className="font-medium">
+                          {note.title || "Untitled Note"}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-xs text-muted-foreground">
+                            Created:{" "}
+                            {format(new Date(note.createdAt), "h:mm a")}
+                          </span>
+                          {note.linkedTaskIds.length > 0 && (
+                            <Badge variant="outline" className="text-xs">
+                              {note.linkedTaskIds.length} linked task
+                              {note.linkedTaskIds.length > 1 ? "s" : ""}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          {/* Empty State */}
-          {tasks.length === 0 && notes.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p className="text-lg font-medium mb-1">No items for this day</p>
-              <p className="text-sm">Start by adding a task or note above</p>
-            </div>
-          )}
-        </div>
+            {/* Empty State */}
+            {tasks.length === 0 && notes.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="text-lg font-medium mb-1">
+                  No items for this day
+                </p>
+                <p className="text-sm">Start by adding a task or note above</p>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

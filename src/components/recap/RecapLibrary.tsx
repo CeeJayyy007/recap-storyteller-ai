@@ -69,6 +69,7 @@ export function RecapLibrary() {
     deleteRecap,
     setGeneratedContent,
     setGenerationConfig,
+    openDeleteRecapModal,
   } = useRecapStore();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -100,10 +101,7 @@ export function RecapLibrary() {
   };
 
   const handleDeleteRecap = (recap: SavedRecap) => {
-    if (confirm(`Are you sure you want to delete "${recap.title}"?`)) {
-      deleteRecap(recap.id);
-      toast.success("Recap deleted");
-    }
+    openDeleteRecapModal(recap);
   };
 
   const handleExportRecap = async (
@@ -240,16 +238,18 @@ export function RecapLibrary() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">Tone</Label>
               <Select
-                value={libraryFilters.tone || ""}
-                onValueChange={(value: RecapTone) =>
-                  setLibraryFilters({ tone: value || null })
+                value={libraryFilters.tone || "all"}
+                onValueChange={(value: string) =>
+                  setLibraryFilters({
+                    tone: value === "all" ? null : (value as RecapTone),
+                  })
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="All tones" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All tones</SelectItem>
+                  <SelectItem value="all">All tones</SelectItem>
                   {FILTER_TONES.map((tone) => (
                     <SelectItem key={tone.value} value={tone.value}>
                       {tone.label}
@@ -263,16 +263,18 @@ export function RecapLibrary() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">Target</Label>
               <Select
-                value={libraryFilters.target || ""}
-                onValueChange={(value: RecapTarget) =>
-                  setLibraryFilters({ target: value || null })
+                value={libraryFilters.target || "all"}
+                onValueChange={(value: string) =>
+                  setLibraryFilters({
+                    target: value === "all" ? null : (value as RecapTarget),
+                  })
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="All targets" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All targets</SelectItem>
+                  <SelectItem value="all">All targets</SelectItem>
                   {FILTER_TARGETS.map((target) => (
                     <SelectItem key={target.value} value={target.value}>
                       {target.label}

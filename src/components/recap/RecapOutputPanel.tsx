@@ -179,7 +179,7 @@ export function RecapOutputPanel() {
 
   if (isGenerating) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
           <div>
@@ -196,7 +196,7 @@ export function RecapOutputPanel() {
 
   if (!generatedContent) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
         <div className="text-center space-y-4 max-w-md">
           <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
             <BookOpen className="h-8 w-8 text-muted-foreground" />

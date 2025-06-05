@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/navigation/Sidebar";
 import { Taskbar } from "@/components/tasks/Taskbar";
+import { useTaskbarToggle } from "@/hooks/useKeyboardShortcuts";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -13,16 +15,28 @@ export function AppLayout({ children }: AppLayoutProps) {
     return saved ? JSON.parse(saved) : false;
   });
 
-  const handleTaskbarToggle = (isVisible: boolean) => {
-    setIsTaskbarVisible(isVisible);
+  const toggleTaskbar = () => {
+    setIsTaskbarVisible((prev) => {
+      const newState = !prev;
+      localStorage.setItem("taskbar-visible", JSON.stringify(newState));
+
+      // Show a subtle toast to indicate the shortcut worked
+      toast.info(newState ? "Taskbar shown" : "Taskbar hidden", {
+        duration: 1500,
+      });
+
+      return newState;
+    });
   };
+
+  // Add keyboard shortcut for taskbar toggle (Ctrl+B)
+  useTaskbarToggle(toggleTaskbar);
 
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar
-        userAvatar="/placeholder-avatar.jpg"
-        userName="John Doe"
-        onTaskbarToggle={handleTaskbarToggle}
+        onTaskbarToggle={toggleTaskbar}
+        isTaskbarVisible={isTaskbarVisible}
       />
       <Taskbar isVisible={isTaskbarVisible} />
       <main

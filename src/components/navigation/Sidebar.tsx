@@ -30,6 +30,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Logo } from "../common/Logo";
 import { Separator } from "@/components/ui/separator";
 import { useThemeStore } from "@/stores/theme-store";
+import { useProfileStore } from "@/stores/profile-store";
 
 interface NavigationItem {
   href: string;
@@ -87,26 +88,21 @@ const navigationFooterItems: NavigationItem[] = [
 ];
 
 interface SidebarProps {
-  userAvatar?: string;
-  userName?: string;
-  onTaskbarToggle?: (isVisible: boolean) => void;
+  onTaskbarToggle?: () => void;
+  isTaskbarVisible?: boolean;
 }
 
 export function Sidebar({
-  userAvatar,
-  userName = "User",
   onTaskbarToggle,
+  isTaskbarVisible = false,
 }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [showLogo, setShowLogo] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
-  const [isTaskbarVisible, setIsTaskbarVisible] = useState(() => {
-    const saved = localStorage.getItem("taskbar-visible");
-    return saved ? JSON.parse(saved) : false;
-  });
 
   const { theme, toggleTheme } = useThemeStore();
+  const { profile } = useProfileStore();
 
   // Toggle between avatar and logo every 5 seconds with coin flip animation
   useEffect(() => {
@@ -116,12 +112,6 @@ export function Sidebar({
 
     return () => clearInterval(interval);
   }, []);
-
-  // Persist taskbar visibility and notify parent
-  useEffect(() => {
-    localStorage.setItem("taskbar-visible", JSON.stringify(isTaskbarVisible));
-    onTaskbarToggle?.(isTaskbarVisible);
-  }, [isTaskbarVisible, onTaskbarToggle]);
 
   const getActiveKey = () => {
     const path = location.pathname;
@@ -166,9 +156,7 @@ export function Sidebar({
     navigate(href);
   };
 
-  const toggleTaskbar = () => {
-    setIsTaskbarVisible((prev) => !prev);
-  };
+  const userName = `${profile.firstName} ${profile.lastName}`;
 
   return (
     <>
@@ -195,9 +183,10 @@ export function Sidebar({
                     }}
                   >
                     <Avatar className="w-14 h-14">
-                      <AvatarImage src={userAvatar} alt={userName} />
+                      <AvatarImage src={profile.profileImage} alt={userName} />
                       <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">
-                        {userName.charAt(0).toUpperCase()}
+                        {profile.firstName.charAt(0).toUpperCase()}
+                        {profile.lastName.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </div>
@@ -241,7 +230,7 @@ export function Sidebar({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={toggleTaskbar}
+                onClick={onTaskbarToggle}
                 className={cn(
                   "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-accent group",
                   isTaskbarVisible
@@ -254,6 +243,7 @@ export function Sidebar({
             </TooltipTrigger>
             <TooltipContent side="right">
               <p>{isTaskbarVisible ? "Hide Taskbar" : "Show Taskbar"}</p>
+              <p className="text-xs text-muted-foreground">Ctrl+B</p>
             </TooltipContent>
           </Tooltip>
           <Separator className="w-full mt-2" />

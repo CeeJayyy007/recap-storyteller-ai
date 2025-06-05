@@ -4,6 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { RecapGeneratorPanel } from "@/components/recap/RecapGeneratorPanel";
 import { RecapOutputPanel } from "@/components/recap/RecapOutputPanel";
 import { RecapLibrary } from "@/components/recap/RecapLibrary";
+import { DeleteRecapModal } from "@/components/modals/DeleteRecapModal";
 import { useRecapStore } from "@/stores/recap-store";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { BookOpen, Settings, Sparkles } from "lucide-react";
@@ -13,7 +14,7 @@ const Recap = () => {
   const { savedRecaps, generatedContent } = useRecapStore();
 
   return (
-    <div className="h-screen bg-background container mx-auto px-4 py-8">
+    <div className="h-full bg-background container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-start justify-between">
@@ -46,7 +47,7 @@ const Recap = () => {
         >
           {/* Generator Panel */}
           <Panel defaultSize={30} minSize={25} maxSize={40}>
-            <div className="h-full border-r border-border">
+            <div className="border-r border-border">
               <div className="p-4 border-b border-border">
                 <h2 className="font-semibold flex items-center gap-2">
                   <Settings className="h-4 w-4" />
@@ -68,7 +69,10 @@ const Recap = () => {
           <Panel defaultSize={showLibrary ? 45 : 70} minSize={40}>
             <div className="h-full">
               <div className="p-4 border-b border-border">
-                <h2 className="font-semibold">Generated Recap</h2>
+                <h2 className="font-semibold flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Generated Recap
+                </h2>
                 <p className="text-xs text-muted-foreground mt-1">
                   {generatedContent
                     ? "Review and edit your recap before saving"
@@ -106,6 +110,9 @@ const Recap = () => {
           )}
         </PanelGroup>
       </div>
+
+      {/* Delete Modal */}
+      <DeleteRecapModal />
     </div>
   );
 };

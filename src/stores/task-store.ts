@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Task, getTaskStatusForDate } from "@/types/task";
 import { mockTasks } from "@/data/mockTasks";
+import { useActivityStore, createTaskActivity } from "@/stores/activity-store";
 
 interface TaskState {
   tasks: Task[];
@@ -30,6 +31,13 @@ export const useTaskStore = create<TaskState>()(
           updatedAt: new Date().toISOString(),
         };
         set((state) => ({ tasks: [...state.tasks, newTask] }));
+
+        // Log activity
+        const activityStore = useActivityStore.getState();
+        activityStore.addActivity(
+          createTaskActivity("task_created", newTask.title, newTask.id)
+        );
+
         return newTask;
       },
 
@@ -44,15 +52,29 @@ export const useTaskStore = create<TaskState>()(
       },
 
       deleteTask: (id) => {
+        // Get task details before deletion for logging
+        const task = get().getTaskById(id);
+
         set((state) => ({
           tasks: state.tasks.filter((task) => task.id !== id),
         }));
+
+        // Log activity
+        if (task) {
+          const activityStore = useActivityStore.getState();
+          activityStore.addActivity(
+            createTaskActivity("task_deleted", task.title, task.id)
+          );
+        }
       },
 
       completeTask: (id, completionDate) => {
         const completedAt = completionDate
           ? new Date(completionDate).toISOString()
           : new Date().toISOString();
+
+        // Get task details for logging
+        const task = get().getTaskById(id);
 
         set((state) => ({
           tasks: state.tasks.map((task) =>
@@ -61,6 +83,14 @@ export const useTaskStore = create<TaskState>()(
               : task
           ),
         }));
+
+        // Log activity
+        if (task) {
+          const activityStore = useActivityStore.getState();
+          activityStore.addActivity(
+            createTaskActivity("task_completed", task.title, task.id)
+          );
+        }
       },
 
       uncompleteTask: (id) => {

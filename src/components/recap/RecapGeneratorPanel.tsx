@@ -320,7 +320,7 @@ export function RecapGeneratorPanel() {
                 <div className="flex items-center gap-2">
                   <span>{tone.icon}</span>
                   <div>
-                    <div className="font-medium">{tone.label}</div>
+                    <div className="font-medium text-left">{tone.label}</div>
                     <div className="text-xs text-muted-foreground">
                       {tone.description}
                     </div>
@@ -354,7 +354,7 @@ export function RecapGeneratorPanel() {
             {TARGETS.map((target) => (
               <SelectItem key={target.value} value={target.value}>
                 <div>
-                  <div className="font-medium">{target.label}</div>
+                  <div className="font-medium text-left">{target.label}</div>
                   <div className="text-xs text-muted-foreground">
                     {target.description}
                   </div>
@@ -387,7 +387,7 @@ export function RecapGeneratorPanel() {
             {FORMATS.map((format) => (
               <SelectItem key={format.value} value={format.value}>
                 <div>
-                  <div className="font-medium">{format.label}</div>
+                  <div className="font-medium text-left">{format.label}</div>
                   <div className="text-xs text-muted-foreground">
                     {format.description}
                   </div>

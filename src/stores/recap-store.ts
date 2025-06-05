@@ -65,6 +65,10 @@ interface RecapState {
     target: RecapTarget | null;
   };
 
+  // Delete modal state
+  isDeleteRecapModalOpen: boolean;
+  selectedRecapForDeletion: SavedRecap | null;
+
   // Actions
   saveRecap: (
     recap: Omit<SavedRecap, "id" | "createdAt" | "updatedAt">
@@ -83,6 +87,10 @@ interface RecapState {
   setLibrarySearch: (search: string) => void;
   setLibraryFilters: (filters: Partial<RecapState["libraryFilters"]>) => void;
   getFilteredRecaps: () => SavedRecap[];
+
+  // Delete modal actions
+  openDeleteRecapModal: (recap: SavedRecap) => void;
+  closeDeleteRecapModal: () => void;
 
   // Future cloud storage support
   syncToCloud?: () => Promise<void>;
@@ -116,6 +124,8 @@ export const useRecapStore = create<RecapState>()(
         tone: null,
         target: null,
       },
+      isDeleteRecapModalOpen: false,
+      selectedRecapForDeletion: null,
 
       // Recap management
       saveRecap: (recap) => {
@@ -227,6 +237,21 @@ export const useRecapStore = create<RecapState>()(
           }
 
           return true;
+        });
+      },
+
+      // Delete modal actions
+      openDeleteRecapModal: (recap) => {
+        set({
+          isDeleteRecapModalOpen: true,
+          selectedRecapForDeletion: recap,
+        });
+      },
+
+      closeDeleteRecapModal: () => {
+        set({
+          isDeleteRecapModalOpen: false,
+          selectedRecapForDeletion: null,
         });
       },
 

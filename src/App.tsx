@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppLayout } from "./layouts/AppLayout";
+import { OnboardingContainer } from "@/components/onboarding/OnboardingContainer";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Notes from "./pages/Notes";
@@ -11,6 +12,8 @@ import Calendar from "./pages/Calendar";
 import Recap from "./pages/Recap";
 import Vault from "./pages/Vault";
 import Profile from "./pages/Profile";
+import Help from "./pages/Help";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { NoteEditor } from "@/components/notes/NoteEditor";
 
@@ -21,6 +24,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <OnboardingContainer />
       <BrowserRouter>
         <Routes>
           {/* Landing page without sidebar */}
@@ -72,6 +76,22 @@ const App = () => (
             element={
               <AppLayout>
                 <Profile />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/help"
+            element={
+              <AppLayout>
+                <Help />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <AppLayout>
+                <Settings />
               </AppLayout>
             }
           />

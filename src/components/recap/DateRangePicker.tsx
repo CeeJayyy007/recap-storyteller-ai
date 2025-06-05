@@ -100,12 +100,12 @@ export function DateRangePicker({
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Sample events for demonstration
-  const [events] = useState([
-    { title: "Kick-off Marc <> Nico", time: "8 - 8:30 AM", type: "upcoming" },
-    { title: "Lunch with Maria", time: "12 - 12:30 PM", type: "upcoming" },
-    { title: "Weekly Stand-up", time: "3 - 3:30 PM", type: "upcoming" },
-    { title: "Dinner with Mia", time: "7 - 8 PM", type: "upcoming" },
-  ]);
+  //   const [events] = useState([
+  //     { title: "Kick-off Marc <> Nico", time: "8 - 8:30 AM", type: "upcoming" },
+  //     { title: "Lunch with Maria", time: "12 - 12:30 PM", type: "upcoming" },
+  //     { title: "Weekly Stand-up", time: "3 - 3:30 PM", type: "upcoming" },
+  //     { title: "Dinner with Mia", time: "7 - 8 PM", type: "upcoming" },
+  //   ]);
 
   const formatDateRange = (range: DateRange) => {
     const start = new Date(range.start);
@@ -140,9 +140,9 @@ export function DateRangePicker({
     onChange(newRange);
   };
 
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  //   const filteredEvents = events.filter((event) =>
+  //     event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
 
   return (
     <div className={cn("space-y-4", className)}>
@@ -165,7 +165,7 @@ export function DateRangePicker({
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-[800px] p-0" align="start" side="bottom">
+          <PopoverContent className="w-[500px] p-0" align="start" side="bottom">
             <div className="flex">
               {/* Calendar Section */}
               <div className="flex-1 border-r border-border">
@@ -268,7 +268,7 @@ export function DateRangePicker({
               </div>
 
               {/* Events Section */}
-              <div className="w-80 bg-muted/10 dark:bg-muted/5">
+              {/* <div className="w-80 bg-muted/10 dark:bg-muted/5">
                 <div className="p-4 border-b border-border">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -301,7 +301,7 @@ export function DateRangePicker({
                     ))}
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </PopoverContent>
         </Popover>
