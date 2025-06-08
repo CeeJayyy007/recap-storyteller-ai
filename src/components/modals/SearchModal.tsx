@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Calendar, Clock, CheckCircle, RotateCw, ArrowRight } from "lucide-react";
+import {
+  Search,
+  Calendar,
+  Clock,
+  CheckCircle,
+  RotateCw,
+  ArrowRight,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +22,7 @@ import { useTaskStore } from "@/stores/task-store";
 import { useDateStore } from "@/stores/date-store";
 import { Task } from "@/types/task";
 import { getTaskStatusForDate } from "@/types/task";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate, getTagColor } from "@/lib/utils";
 
 interface SearchCriteria {
   title: string;
@@ -27,7 +34,7 @@ export function SearchModal() {
   const { isSearchOpen, closeSearch } = useModalStore();
   const { tasks } = useTaskStore();
   const { setSelectedDate } = useDateStore();
-  
+
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
     title: "",
     description: "",
@@ -35,13 +42,13 @@ export function SearchModal() {
   });
   const [searchResults, setSearchResults] = useState<Task[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  
+
   const debounceTimer = useRef<NodeJS.Timeout>();
 
   // Debounced search function
   const performSearch = (criteria: SearchCriteria) => {
     const { title, description, tags } = criteria;
-    
+
     // If all criteria are empty, show no results
     if (!title.trim() && !description.trim() && !tags.trim()) {
       setSearchResults([]);
@@ -49,14 +56,16 @@ export function SearchModal() {
     }
 
     const results = tasks.filter((task) => {
-      const titleMatch = !title.trim() || 
-        task.title.toLowerCase().includes(title.toLowerCase());
-      
-      const descriptionMatch = !description.trim() || 
+      const titleMatch =
+        !title.trim() || task.title.toLowerCase().includes(title.toLowerCase());
+
+      const descriptionMatch =
+        !description.trim() ||
         task.description.toLowerCase().includes(description.toLowerCase());
-      
-      const tagsMatch = !tags.trim() || 
-        task.tags.some(tag => tag.toLowerCase().includes(tags.toLowerCase()));
+
+      const tagsMatch =
+        !tags.trim() ||
+        task.tags.some((tag) => tag.toLowerCase().includes(tags.toLowerCase()));
 
       return titleMatch && descriptionMatch && tagsMatch;
     });
@@ -84,8 +93,8 @@ export function SearchModal() {
 
   // Group results by current status (relative to today)
   const getGroupedResults = () => {
-    const today = new Date().toISOString().split('T')[0];
-    
+    const today = new Date().toISOString().split("T")[0];
+
     const grouped = {
       carriedOver: [] as Task[],
       pending: [] as Task[],
@@ -94,9 +103,9 @@ export function SearchModal() {
 
     searchResults.forEach((task) => {
       const status = getTaskStatusForDate(task, today);
-      if (status === 'carried-over') grouped.carriedOver.push(task);
-      else if (status === 'pending') grouped.pending.push(task);
-      else if (status === 'completed') grouped.completed.push(task);
+      if (status === "carried-over") grouped.carriedOver.push(task);
+      else if (status === "pending") grouped.pending.push(task);
+      else if (status === "completed") grouped.completed.push(task);
     });
 
     return grouped;
@@ -106,56 +115,64 @@ export function SearchModal() {
     // Navigate to task's creation date
     const createdDate = new Date(task.createdAt);
     setSelectedDate(createdDate);
-    
+
     // Store task ID for highlighting
-    localStorage.setItem('highlightTaskId', task.id);
-    
+    localStorage.setItem("highlightTaskId", task.id);
+
     closeSearch();
   };
 
   const renderTaskResult = (task: Task, status: string) => {
     const statusInfo = {
-      'carried-over': { 
-        icon: <RotateCw className="h-4 w-4 text-red-600" />, 
-        color: 'text-red-600',
-        bgColor: 'bg-red-50 border-red-200'
+      "carried-over": {
+        icon: <RotateCw className="h-4 w-4 text-red-600" />,
+        color: "text-red-600 dark:text-red-400",
+        bgColor:
+          "bg-red-50 border-red-200 dark:bg-red-950/50 dark:border-red-800",
       },
-      'pending': { 
-        icon: <Clock className="h-4 w-4 text-orange-600" />, 
-        color: 'text-orange-600',
-        bgColor: 'bg-orange-50 border-orange-200'
+      pending: {
+        icon: <Clock className="h-4 w-4 text-orange-600" />,
+        color: "text-orange-600 dark:text-orange-400",
+        bgColor:
+          "bg-orange-50 border-orange-200 dark:bg-orange-950/50 dark:border-orange-800",
       },
-      'completed': { 
-        icon: <CheckCircle className="h-4 w-4 text-green-600" />, 
-        color: 'text-green-600',
-        bgColor: 'bg-green-50 border-green-200'
+      completed: {
+        icon: <CheckCircle className="h-4 w-4 text-green-600" />,
+        color: "text-green-600 dark:text-green-400 ",
+        bgColor:
+          "bg-green-50 border-green-200 dark:bg-green-950/50 dark:border-green-800",
       },
     };
 
     const info = statusInfo[status as keyof typeof statusInfo];
 
     return (
-      <div key={task.id} className={`p-3 rounded-lg border ${info.bgColor} mb-3`}>
+      <div
+        key={task.id}
+        className={`p-3 rounded-lg border ${info.bgColor} mb-3`}
+      >
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               {info.icon}
               <h4 className="font-medium text-sm truncate">{task.title}</h4>
             </div>
-            
+
             {task.description && (
               <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
                 {task.description}
               </p>
             )}
-            
+
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Calendar className="h-3 w-3" />
-              <span>Created: {formatDate(task.createdAt.split('T')[0])}</span>
+              <span>Created: {formatDate(task.createdAt.split("T")[0])}</span>
               {task.completedAt && (
                 <>
                   <span>•</span>
-                  <span>Completed: {formatDate(task.completedAt.split('T')[0])}</span>
+                  <span>
+                    Completed: {formatDate(task.completedAt.split("T")[0])}
+                  </span>
                 </>
               )}
             </div>
@@ -163,7 +180,11 @@ export function SearchModal() {
             {task.tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {task.tags.slice(0, 3).map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs">
+                  <Badge
+                    key={tag}
+                    variant="outline"
+                    className={cn("text-xs border", getTagColor(tag))}
+                  >
                     {tag}
                   </Badge>
                 ))}
@@ -175,7 +196,7 @@ export function SearchModal() {
               </div>
             )}
           </div>
-          
+
           <Button
             size="sm"
             variant="outline"
@@ -209,25 +230,29 @@ export function SearchModal() {
             <Input
               placeholder="Search by title..."
               value={searchCriteria.title}
-              onChange={(e) => handleSearchChange('title', e.target.value)}
+              onChange={(e) => handleSearchChange("title", e.target.value)}
             />
           </div>
-          
+
           <div>
-            <label className="text-sm font-medium mb-2 block">Description</label>
+            <label className="text-sm font-medium mb-2 block">
+              Description
+            </label>
             <Input
               placeholder="Search by description..."
               value={searchCriteria.description}
-              onChange={(e) => handleSearchChange('description', e.target.value)}
+              onChange={(e) =>
+                handleSearchChange("description", e.target.value)
+              }
             />
           </div>
-          
+
           <div>
             <label className="text-sm font-medium mb-2 block">Tags</label>
             <Input
               placeholder="Search by tags..."
               value={searchCriteria.tags}
-              onChange={(e) => handleSearchChange('tags', e.target.value)}
+              onChange={(e) => handleSearchChange("tags", e.target.value)}
             />
           </div>
         </div>
@@ -255,8 +280,8 @@ export function SearchModal() {
                         <RotateCw className="h-4 w-4" />
                         Carried Over ({groupedResults.carriedOver.length})
                       </h3>
-                      {groupedResults.carriedOver.map((task) => 
-                        renderTaskResult(task, 'carried-over')
+                      {groupedResults.carriedOver.map((task) =>
+                        renderTaskResult(task, "carried-over")
                       )}
                     </div>
                   )}
@@ -268,8 +293,8 @@ export function SearchModal() {
                         <Clock className="h-4 w-4" />
                         Pending ({groupedResults.pending.length})
                       </h3>
-                      {groupedResults.pending.map((task) => 
-                        renderTaskResult(task, 'pending')
+                      {groupedResults.pending.map((task) =>
+                        renderTaskResult(task, "pending")
                       )}
                     </div>
                   )}
@@ -277,12 +302,12 @@ export function SearchModal() {
                   {/* Completed Tasks */}
                   {groupedResults.completed.length > 0 && (
                     <div>
-                      <h3 className="text-sm font-semibold text-green-600 mb-3 flex items-center gap-2">
+                      <h3 className="text-sm font-semibold text-green-600 mb-3 flex items-center gap-2 ">
                         <CheckCircle className="h-4 w-4" />
                         Completed ({groupedResults.completed.length})
                       </h3>
-                      {groupedResults.completed.map((task) => 
-                        renderTaskResult(task, 'completed')
+                      {groupedResults.completed.map((task) =>
+                        renderTaskResult(task, "completed")
                       )}
                     </div>
                   )}
@@ -294,4 +319,4 @@ export function SearchModal() {
       </DialogContent>
     </Dialog>
   );
-} 
+}

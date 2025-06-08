@@ -1,6 +1,6 @@
 import { MoreVertical, Eye, Edit, FileText, Trash2 } from "lucide-react";
 import { Task } from "@/types/task";
-import { cn, getDateOnly, formatDate } from "@/lib/utils";
+import { cn, formatDate, getTagColor } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
 import { Badge } from "../ui/badge";
 import {
@@ -51,31 +51,14 @@ export function TaskCard({
   const getCardStyles = () => {
     switch (taskStatus) {
       case "completed":
-        return "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800";
+        return "bg-green-50 border-green-200 dark:bg-green-950/50 dark:border-green-800";
       case "carried-over":
-        return "bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800";
+        return "bg-red-50 border-red-200 dark:bg-red-950/50 dark:border-red-800";
       case "pending":
-        return "bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800";
+        return "bg-orange-50 border-orange-200 dark:bg-orange-950/50 dark:border-orange-800";
       default:
-        return "bg-gray-50 border-gray-200 dark:bg-gray-950 dark:border-gray-800";
+        return "bg-gray-50 border-gray-200 dark:bg-gray-950/50 dark:border-gray-800";
     }
-  };
-
-  const getTagColor = (tag: string) => {
-    // Simple hash function to generate consistent colors
-    let hash = 0;
-    for (let i = 0; i < tag.length; i++) {
-      hash = tag.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const colors = [
-      "bg-blue-100 text-blue-800 border-blue-300",
-      "bg-green-100 text-green-800 border-green-300",
-      "bg-yellow-100 text-yellow-800 border-yellow-300",
-      "bg-purple-100 text-purple-800 border-purple-300",
-      "bg-pink-100 text-pink-800 border-pink-300",
-      "bg-indigo-100 text-indigo-800 border-indigo-300",
-    ];
-    return colors[Math.abs(hash) % colors.length];
   };
 
   const getCardFocusStyles = (status: string) => {
