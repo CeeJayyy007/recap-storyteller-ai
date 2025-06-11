@@ -147,7 +147,7 @@ export function Sidebar({
   const handleProfileMenuAction = (action: string) => {
     switch (action) {
       case "home":
-        navigate("/dashboard");
+        navigate("/");
         break;
       case "profile":
         navigate("/profile");
