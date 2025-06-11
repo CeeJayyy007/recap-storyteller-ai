@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Check, ChevronsUpDown, X, Plus, CalendarIcon } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import {
+  Calendar as CalendarIcon,
+  ChevronsUpDown,
+  Plus,
+  X,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +24,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -26,38 +42,17 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useModalStore } from "@/stores/modal-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useNoteStore } from "@/stores/note-store";
 import { useTagStore } from "@/stores/tag-store";
-import { Calendar } from "@/components/ui/calendar";
-import { format, parseISO } from "date-fns";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   linkedNoteId: z.string().optional(),
-  tags: z.array(z.string()).default([]),
-  createdAt: z.date({
-    required_error: "Please select a creation date",
-  }),
+  createdAt: z.date(),
   completedAt: z.date().optional(),
 });
 
@@ -71,7 +66,6 @@ export function EditTaskModal() {
 
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   const [isTagOpen, setIsTagOpen] = useState(false);
-  const [isDateOpen, setIsDateOpen] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -81,7 +75,6 @@ export function EditTaskModal() {
       title: "",
       description: "",
       linkedNoteId: "",
-      tags: [],
       createdAt: new Date(),
       completedAt: undefined,
     },
@@ -180,28 +173,29 @@ export function EditTaskModal() {
               )}
             />
 
+            {/* Creation Date */}
             <FormField
               control={form.control}
               name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Creation Date *</FormLabel>
-                  <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+                  <FormLabel>Creation Date</FormLabel>
+                  <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant="outline"
                           className={cn(
-                            "justify-start text-left font-normal",
+                            "w-full pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
                             format(field.value, "PPP")
                           ) : (
                             <span>Pick a date</span>
                           )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -209,13 +203,7 @@ export function EditTaskModal() {
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={(date) => {
-                          field.onChange(date);
-                          setIsDateOpen(false);
-                        }}
-                        disabled={(date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0))
-                        }
+                        onSelect={field.onChange}
                         initialFocus
                       />
                     </PopoverContent>
@@ -225,28 +213,29 @@ export function EditTaskModal() {
               )}
             />
 
+            {/* Completion Date */}
             <FormField
               control={form.control}
               name="completedAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Completion Date (Optional)</FormLabel>
-                  <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+                  <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant="outline"
                           className={cn(
-                            "justify-start text-left font-normal",
+                            "w-full pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
                             format(field.value, "PPP")
                           ) : (
                             <span>Pick a date</span>
                           )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -254,13 +243,7 @@ export function EditTaskModal() {
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={(date) => {
-                          field.onChange(date);
-                          setIsDateOpen(false);
-                        }}
-                        disabled={(date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0))
-                        }
+                        onSelect={field.onChange}
                         initialFocus
                       />
                     </PopoverContent>
@@ -270,6 +253,7 @@ export function EditTaskModal() {
               )}
             />
 
+            {/* Linked Note */}
             <FormField
               control={form.control}
               name="linkedNoteId"
@@ -296,47 +280,21 @@ export function EditTaskModal() {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[400px] p-0">
+                    <PopoverContent className="w-[200px] p-0">
                       <Command>
                         <CommandInput placeholder="Search notes..." />
                         <CommandList>
                           <CommandEmpty>No notes found.</CommandEmpty>
                           <CommandGroup>
-                            <CommandItem
-                              value=""
-                              onSelect={() => {
-                                form.setValue("linkedNoteId", "");
-                                setIsNoteOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  !field.value ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              No note
-                            </CommandItem>
                             {availableNotes.map((note) => (
                               <CommandItem
                                 key={note.id}
-                                value={note.title}
+                                value={note.id}
                                 onSelect={() => {
-                                  form.setValue(
-                                    "linkedNoteId",
-                                    field.value === note.id ? "" : note.id
-                                  );
+                                  field.onChange(note.id);
                                   setIsNoteOpen(false);
                                 }}
                               >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    field.value === note.id
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
                                 {note.title}
                               </CommandItem>
                             ))}
@@ -350,6 +308,7 @@ export function EditTaskModal() {
               )}
             />
 
+            {/* Tags */}
             <div className="space-y-2">
               <FormLabel>Tags</FormLabel>
               <div className="flex flex-wrap gap-2 mb-2">
@@ -375,7 +334,7 @@ export function EditTaskModal() {
                     Add tags...
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[400px] p-0">
+                <PopoverContent className="w-[200px] p-0">
                   <Command>
                     <CommandInput
                       placeholder="Search or create tags..."

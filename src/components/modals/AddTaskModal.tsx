@@ -1,11 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Check, ChevronsUpDown, X, Plus, CalendarIcon } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import {
+  Calendar as CalendarIcon,
+  ChevronsUpDown,
+  Plus,
+  X,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -17,6 +24,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -25,33 +42,18 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useModalStore } from "@/stores/modal-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useNoteStore } from "@/stores/note-store";
 import { useTagStore } from "@/stores/tag-store";
-import { useDateStore } from "@/stores/date-store";
-import { DialogDescription } from "@radix-ui/react-dialog";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   linkedNoteId: z.string().optional(),
-  tags: z.array(z.string()).default([]),
-  createdAt: z.date({
-    required_error: "Please select a creation date for the task",
-  }),
+  createdAt: z.date(),
+  completedAt: z.date().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -59,13 +61,11 @@ type FormData = z.infer<typeof formSchema>;
 export function AddTaskModal() {
   const { isAddTaskOpen, closeAddTask } = useModalStore();
   const { addTask } = useTaskStore();
-  const { notes, getNoteById } = useNoteStore();
+  const { notes } = useNoteStore();
   const { tags, getOrCreateTag } = useTagStore();
-  const { selectedDate } = useDateStore();
 
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   const [isTagOpen, setIsTagOpen] = useState(false);
-  const [isDateOpen, setIsDateOpen] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -75,16 +75,21 @@ export function AddTaskModal() {
       title: "",
       description: "",
       linkedNoteId: "",
-      tags: [],
-      createdAt: selectedDate,
+      createdAt: new Date(),
+      completedAt: undefined,
     },
   });
 
-  useEffect(() => {
-    form.setValue("createdAt", selectedDate);
-  }, [selectedDate, form]);
-
   const onSubmit = async (data: FormData) => {
+    // Create the new task
+    const newTask = addTask({
+      user_id: "user-1", // TODO: Get from auth context
+      title: data.title,
+      description: data.description || "",
+      tags: selectedTags,
+      completedAt: data.completedAt?.toISOString() || null,
+      linkedNoteId: data.linkedNoteId || null,
+    });
 
     // If a note is linked, we could open it here
     if (data.linkedNoteId) {
@@ -103,7 +108,6 @@ export function AddTaskModal() {
       setSelectedTags([...selectedTags, tag.name]);
     }
     setTagInput("");
-    setIsTagOpen(false);
   };
 
   const handleRemoveTag = (tagName: string) => {
@@ -156,28 +160,29 @@ export function AddTaskModal() {
               )}
             />
 
+            {/* Creation Date */}
             <FormField
               control={form.control}
               name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Creation Date *</FormLabel>
-                  <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+                  <FormLabel>Creation Date</FormLabel>
+                  <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant="outline"
                           className={cn(
-                            "justify-start text-left font-normal",
+                            "w-full pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
                             format(field.value, "PPP")
                           ) : (
                             <span>Pick a date</span>
                           )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -185,13 +190,7 @@ export function AddTaskModal() {
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={(date) => {
-                          field.onChange(date);
-                          setIsDateOpen(false);
-                        }}
-                        disabled={(date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0))
-                        }
+                        onSelect={field.onChange}
                         initialFocus
                       />
                     </PopoverContent>
@@ -201,6 +200,47 @@ export function AddTaskModal() {
               )}
             />
 
+            {/* Completion Date */}
+            <FormField
+              control={form.control}
+              name="completedAt"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Completion Date (Optional)</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Linked Note */}
             <FormField
               control={form.control}
               name="linkedNoteId"
@@ -227,7 +267,7 @@ export function AddTaskModal() {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[400px] p-0">
+                    <PopoverContent className="w-[200px] p-0">
                       <Command>
                         <CommandInput placeholder="Search notes..." />
                         <CommandList>
@@ -236,23 +276,12 @@ export function AddTaskModal() {
                             {availableNotes.map((note) => (
                               <CommandItem
                                 key={note.id}
-                                value={note.title}
+                                value={note.id}
                                 onSelect={() => {
-                                  form.setValue(
-                                    "linkedNoteId",
-                                    field.value === note.id ? "" : note.id
-                                  );
+                                  field.onChange(note.id);
                                   setIsNoteOpen(false);
                                 }}
                               >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    field.value === note.id
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
                                 {note.title}
                               </CommandItem>
                             ))}
@@ -266,6 +295,7 @@ export function AddTaskModal() {
               )}
             />
 
+            {/* Tags */}
             <div className="space-y-2">
               <FormLabel>Tags</FormLabel>
               <div className="flex flex-wrap gap-2 mb-2">
@@ -291,7 +321,7 @@ export function AddTaskModal() {
                     Add tags...
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[400px] p-0">
+                <PopoverContent className="w-[200px] p-0">
                   <Command>
                     <CommandInput
                       placeholder="Search or create tags..."

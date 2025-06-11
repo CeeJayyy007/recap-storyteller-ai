@@ -1,4 +1,12 @@
-import { MoreVertical, Eye, Edit, FileText, Trash2 } from "lucide-react";
+import {
+  MoreVertical,
+  Eye,
+  Edit,
+  FileText,
+  Trash2,
+  NotebookPen,
+  LucideView,
+} from "lucide-react";
 import { Task } from "@/types/task";
 import { cn, formatDate, getTagColor } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
@@ -12,6 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { getTaskStatusForDate } from "@/types/task";
 import { useEffect, useState } from "react";
+import { useNoteStore } from "@/stores/note-store";
+import { useNavigate } from "react-router-dom";
 
 interface TaskCardProps {
   task: Task;
@@ -34,6 +44,9 @@ export function TaskCard({
 }: TaskCardProps) {
   const [isHighlighted, setIsHighlighted] = useState(false);
   const selectedDateStr = selectedDate.split("T")[0]; // YYYY-MM-DD
+  const { getNoteById } = useNoteStore();
+  const linkedNote = task.linkedNoteId ? getNoteById(task.linkedNoteId) : null;
+  const navigate = useNavigate();
 
   // Calculate dynamic status for the selected date
   const taskStatus = getTaskStatusForDate(task, selectedDateStr);
@@ -49,16 +62,25 @@ export function TaskCard({
   });
 
   const getCardStyles = () => {
-    switch (taskStatus) {
-      case "completed":
-        return "bg-green-50 border-green-200 dark:bg-green-950/50 dark:border-green-800";
-      case "carried-over":
-        return "bg-red-50 border-red-200 dark:bg-red-950/50 dark:border-red-800";
-      case "pending":
-        return "bg-orange-50 border-orange-200 dark:bg-orange-950/50 dark:border-orange-800";
+    const baseStyles = {
+      completed:
+        "bg-green-50 border-green-200 dark:bg-green-950/50 dark:border-green-800",
+      "carried-over":
+        "bg-red-50 border-red-200 dark:bg-red-950/50 dark:border-red-800",
+      pending:
+        "bg-orange-50 border-orange-200 dark:bg-orange-950/50 dark:border-orange-800",
       default:
-        return "bg-gray-50 border-gray-200 dark:bg-gray-950/50 dark:border-gray-800";
-    }
+        "bg-gray-50 border-gray-200 dark:bg-gray-950/50 dark:border-gray-800",
+    };
+
+    const statusStyle = taskStatus
+      ? baseStyles[taskStatus]
+      : baseStyles.default;
+    const linkedNoteStyle = linkedNote
+      ? "border-l-4 border-l-purple-500 dark:border-l-purple-400"
+      : "";
+
+    return cn(statusStyle, linkedNoteStyle);
   };
 
   const getCardFocusStyles = (status: string) => {
@@ -91,11 +113,18 @@ export function TaskCard({
     }
   }, [task.id]);
 
+  const handleViewLinkedNote = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (linkedNote) {
+      navigate(`/notes/${linkedNote.id}`);
+    }
+  };
+
   return (
     <div
       id={`task-${task.id}`}
       className={cn(
-        "p-3 rounded-lg border-2 transition-all duration-300",
+        "p-3 rounded-lg border-2 transition-all duration-300 relative group",
         getCardStyles(),
         isHighlighted && getCardFocusStyles(taskStatus)
       )}
@@ -141,6 +170,7 @@ export function TaskCard({
               <Eye className="mr-2 h-4 w-4" />
               View Task
             </DropdownMenuItem>
+
             <DropdownMenuItem onClick={() => onEdit(task)}>
               <Edit className="mr-2 h-4 w-4" />
               Edit Task
@@ -149,6 +179,12 @@ export function TaskCard({
               <FileText className="mr-2 h-4 w-4" />
               Add Note
             </DropdownMenuItem>
+            {linkedNote && (
+              <DropdownMenuItem onClick={handleViewLinkedNote}>
+                <LucideView className="mr-2 h-4 w-4" />
+                View Note
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               onClick={() => onDelete(task)}
               className="text-destructive focus:text-destructive"

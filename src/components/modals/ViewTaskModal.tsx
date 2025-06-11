@@ -12,6 +12,7 @@ import { Calendar, Clock, FileText, Tag } from "lucide-react";
 import { useModalStore } from "@/stores/modal-store";
 import { useNoteStore } from "@/stores/note-store";
 import { useTagStore } from "@/stores/tag-store";
+import { getTaskStatusForDate } from "@/types/task";
 
 export function ViewTaskModal() {
   const { isViewTaskOpen, selectedTask, closeViewTask } = useModalStore();
@@ -23,6 +24,10 @@ export function ViewTaskModal() {
   const linkedNote = selectedTask.linkedNoteId
     ? getNoteById(selectedTask.linkedNoteId)
     : null;
+
+  // Calculate task status for today
+  const today = new Date().toISOString().split("T")[0];
+  const taskStatus = getTaskStatusForDate(selectedTask, today);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -56,9 +61,8 @@ export function ViewTaskModal() {
           {/* Status and Title */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <Badge className={getStatusColor(selectedTask.status)}>
-                {selectedTask.status.charAt(0).toUpperCase() +
-                  selectedTask.status.slice(1)}
+              <Badge className={getStatusColor(taskStatus)}>
+                {taskStatus.charAt(0).toUpperCase() + taskStatus.slice(1)}
               </Badge>
             </div>
             <h3 className="text-xl font-semibold">{selectedTask.title}</h3>
@@ -77,24 +81,18 @@ export function ViewTaskModal() {
           )}
 
           {/* Metadata */}
-          <div className="grid grid-cols-1 gap-4 p-4 bg-muted/50 rounded-lg">
+          <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Date:</span>
-              <span>{format(new Date(selectedTask.date), "PPP")}</span>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm">
-              <Clock className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Created:</span>
               <span>{format(new Date(selectedTask.createdAt), "PPp")}</span>
             </div>
 
-            {selectedTask.updatedAt !== selectedTask.createdAt && (
+            {selectedTask.completedAt && (
               <div className="flex items-center gap-2 text-sm">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Updated:</span>
-                <span>{format(new Date(selectedTask.updatedAt), "PPp")}</span>
+                <span className="text-muted-foreground">Completed:</span>
+                <span>{format(new Date(selectedTask.completedAt), "PPp")}</span>
               </div>
             )}
           </div>

@@ -537,7 +537,7 @@ const Profile = () => {
                       icon={<Clock className="h-4 w-4" />}
                       label="Carried Over"
                       value={productivityMetrics.weekly.carriedOver}
-                      color="orange"
+                      color="red"
                     />
                     <MetricCard
                       icon={<RotateCcw className="h-4 w-4" />}
@@ -568,7 +568,7 @@ const Profile = () => {
                       icon={<Clock className="h-4 w-4" />}
                       label="Carried Over"
                       value={productivityMetrics.monthly.carriedOver}
-                      color="orange"
+                      color="red"
                     />
                     <MetricCard
                       icon={<RotateCcw className="h-4 w-4" />}
@@ -690,7 +690,7 @@ interface MetricCardProps {
   icon: React.ReactNode;
   label: string;
   value: string | number;
-  color: "blue" | "green" | "orange" | "purple";
+  color: "blue" | "green" | "orange" | "purple" | "red";
 }
 
 const MetricCard = ({ icon, label, value, color }: MetricCardProps) => {
@@ -698,6 +698,7 @@ const MetricCard = ({ icon, label, value, color }: MetricCardProps) => {
     blue: "text-blue-600 bg-blue-50 dark:bg-blue-950/30",
     green: "text-green-600 bg-green-50 dark:bg-green-950/30",
     orange: "text-orange-600 bg-orange-50 dark:bg-orange-950/30",
+    red: "text-red-600 bg-red-50 dark:bg-red-950/30",
     purple: "text-purple-600 bg-purple-50 dark:bg-purple-950/30",
   };
 
