@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,21 +35,24 @@ import { useThemeStore } from "@/stores/theme-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useNoteStore } from "@/stores/note-store";
 import { useOnboardingStore } from "@/stores/onboarding-store";
+import { useProfileStore } from "@/stores/profile-store";
 import { Task } from "@/types/task";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 const Settings = () => {
   const { theme, toggleTheme } = useThemeStore();
   const { tasks } = useTaskStore();
   const { notes } = useNoteStore();
   const { resetOnboarding, startAppTransition } = useOnboardingStore();
+  const { profile } = useProfileStore();
 
   // Profile settings state
-  const [profile, setProfile] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    bio: "Productivity enthusiast who loves getting things done efficiently.",
+  const [profileSettings, setProfileSettings] = useState({
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    email: profile.email,
+    bio: profile.bio,
   });
 
   // Preferences state
@@ -71,6 +74,7 @@ const Settings = () => {
   });
 
   const handleProfileSave = () => {
+    // TODO: Implement profile update
     toast.success("Profile updated successfully!");
   };
 
@@ -96,16 +100,60 @@ const Settings = () => {
     toast.info("Starting onboarding flow...");
   };
 
+  // Calculate storage usage
+  const calculateStorageUsage = () => {
+    const tasksSize = new Blob([JSON.stringify(tasks)]).size;
+    const notesSize = new Blob([JSON.stringify(notes)]).size;
+    const totalSize = tasksSize + notesSize;
+
+    // Convert to KB or MB
+    if (totalSize < 1024) {
+      return `${totalSize} B`;
+    } else if (totalSize < 1024 * 1024) {
+      return `${(totalSize / 1024).toFixed(1)} KB`;
+    } else {
+      return `${(totalSize / (1024 * 1024)).toFixed(1)} MB`;
+    }
+  };
+
   const getDataStats = () => ({
     totalTasks: tasks.length,
     completedTasks: tasks.filter(
       (t: Task) => t.completedAt !== undefined && t.completedAt !== null
     ).length,
     totalNotes: notes.length,
-    storageUsed: "2.3 MB", // Mock value
+    storageUsed: calculateStorageUsage(),
   });
 
   const stats = getDataStats();
+
+  // Format member since date
+  const memberSince = useMemo(() => {
+    if (!profile.joinedDate) return "N/A";
+    return format(new Date(profile.joinedDate), "MMMM yyyy");
+  }, [profile.joinedDate]);
+
+  // Get current device info
+  const currentDevice = useMemo(() => {
+    const userAgent = navigator.userAgent;
+    let browser = "Unknown";
+    let os = "Unknown";
+
+    // Detect browser
+    if (userAgent.includes("Chrome")) browser = "Chrome";
+    else if (userAgent.includes("Firefox")) browser = "Firefox";
+    else if (userAgent.includes("Safari")) browser = "Safari";
+    else if (userAgent.includes("Edge")) browser = "Edge";
+
+    // Detect OS
+    if (userAgent.includes("Windows")) os = "Windows";
+    else if (userAgent.includes("Mac")) os = "macOS";
+    else if (userAgent.includes("Linux")) os = "Linux";
+    else if (userAgent.includes("Android")) os = "Android";
+    else if (userAgent.includes("iOS")) os = "iOS";
+
+    return { browser, os };
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
@@ -148,7 +196,7 @@ const Settings = () => {
                   <div className="text-sm text-muted-foreground">
                     Member Since
                   </div>
-                  <div className="font-medium">January 2024</div>
+                  <div className="font-medium">{memberSince}</div>
                 </div>
                 <div className="p-4 bg-muted/50 rounded-lg">
                   <div className="text-sm text-muted-foreground">Plan Type</div>
@@ -172,7 +220,8 @@ const Settings = () => {
                     <div className="space-y-1">
                       <div className="font-medium">Current Session</div>
                       <div className="text-sm text-muted-foreground">
-                        Windows • Chrome • Current device
+                        {currentDevice.os} • {currentDevice.browser} • Current
+                        device
                       </div>
                       <div className="text-xs text-muted-foreground">
                         Last active: Now
@@ -180,26 +229,7 @@ const Settings = () => {
                     </div>
                     <Badge variant="secondary">Current</Badge>
                   </div>
-
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="space-y-1">
-                      <div className="font-medium">Mobile Session</div>
-                      <div className="text-sm text-muted-foreground">
-                        iOS • Safari • iPhone
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Last active: 2 hours ago
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      Revoke
-                    </Button>
-                  </div>
                 </div>
-
-                <Button variant="outline" className="w-full sm:w-auto">
-                  Sign Out All Other Sessions
-                </Button>
               </div>
 
               <Separator />
@@ -235,15 +265,13 @@ const Settings = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 grid grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full sm:w-auto">
-                  <Lock className="h-4 w-4 mr-2" />
-                  Change Password
-                </Button>
-                {/* <Button variant="outline" className="w-full sm:w-auto">
-                  <Lock className="h-4 w-4 mr-2" />
-                  Two-Factor Authentication
-                </Button> */}
+              <div className="space-y-4">
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    Authentication features are not yet implemented. Security
+                    settings will be available in a future update.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

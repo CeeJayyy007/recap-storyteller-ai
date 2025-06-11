@@ -208,21 +208,18 @@ const Help = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className=" mb-8">
           <h1 className="text-4xl font-bold mb-4">Need Assistance?</h1>
-          <p className="text-lg text-muted-foreground mb-2">
+          <p className="text-muted-foreground mt-1">
             If you're feeling overwhelmed, remember you don't have to face it
             alone.
-          </p>
-          <p className="text-muted-foreground">
-            Reach out and get the help you need
           </p>
         </div>
 
         {/* Search Bar */}
-        <div className="relative mb-12">
+        <div className="relative mb-8">
           <Input
             placeholder="Ask a question..."
             className="pl-4 pr-20 py-6 text-lg rounded-lg border-2"
@@ -237,7 +234,7 @@ const Help = () => {
         </div>
 
         {/* Help Categories */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {HELP_CATEGORIES.map((category) => (
             <Card
               key={category.id}

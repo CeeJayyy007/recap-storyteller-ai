@@ -27,9 +27,16 @@ interface NotesCardProps {
   onView: (note: Note) => void;
   onEdit: (note: Note) => void;
   onAddTask: (note: Note) => void;
+  onDelete: (note: Note) => void;
 }
 
-export function NotesCard({ note, onView, onEdit, onAddTask }: NotesCardProps) {
+export function NotesCard({
+  note,
+  onView,
+  onEdit,
+  onAddTask,
+  onDelete,
+}: NotesCardProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { openAddTaskToNote, openDeleteNote } = useModalStore();
 
@@ -125,7 +132,7 @@ export function NotesCard({ note, onView, onEdit, onAddTask }: NotesCardProps) {
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    openDeleteNote(note);
+    onDelete(note);
     setIsDropdownOpen(false);
   };
 

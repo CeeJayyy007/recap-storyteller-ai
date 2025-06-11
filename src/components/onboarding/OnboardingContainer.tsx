@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useOnboardingStore } from "@/stores/onboarding-store";
+import { useProfileStore } from "@/stores/profile-store";
 import { SplashScreen } from "./SplashScreen";
 import { OnboardingFlow } from "./OnboardingFlow";
 
@@ -14,15 +15,18 @@ export function OnboardingContainer() {
     startAppTransition,
   } = useOnboardingStore();
 
+  const { initializeProfile } = useProfileStore();
+
   // Start the onboarding flow when the app first loads
   useEffect(() => {
     const hasInitialized = sessionStorage.getItem("app-initialized");
 
     if (!hasInitialized) {
       startAppTransition();
+      initializeProfile();
       sessionStorage.setItem("app-initialized", "true");
     }
-  }, [startAppTransition]);
+  }, [startAppTransition, initializeProfile]);
 
   const handleSplashComplete = () => {
     setSplashScreen(false);

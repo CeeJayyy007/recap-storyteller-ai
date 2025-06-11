@@ -16,6 +16,8 @@ import {
   BarChart3,
   RotateCw,
   ClockIcon,
+  Ghost,
+  InfoIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,22 +27,34 @@ import { Progress } from "@/components/ui/progress";
 import { useTaskStore } from "@/stores/task-store";
 import { useNoteStore } from "@/stores/note-store";
 import { useActivityStore } from "@/stores/activity-store";
+import { useProfileStore } from "@/stores/profile-store";
+import { useTaskbarStore } from "@/stores/taskbar-store";
 import {
   getTimeBasedGreeting,
   getMotivationalText,
   getRecentActivity,
+  calculateStreak,
 } from "@/lib/dashboard-utils";
 import { cn } from "@/lib/utils";
 import { Task, getTaskStatusForDate } from "@/types/task";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NotesCard } from "@/components/notes/NotesCard";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useModalStore } from "@/stores/modal-store";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { tasks } = useTaskStore();
   const { notes } = useNoteStore();
   const { getRecentActivities } = useActivityStore();
-
+  const { profile } = useProfileStore();
+  const { toggleVisibility } = useTaskbarStore();
+  const { openAddTask } = useModalStore();
   const today = new Date().toISOString().split("T")[0];
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
     .toISOString()
@@ -95,14 +109,18 @@ const Dashboard = () => {
     const completionRate =
       totalWeekTasks > 0 ? (totalWeekCompleted / totalWeekTasks) * 100 : 0;
 
+    // Calculate streak from activities
+    const activities = getRecentActivities();
+    const streakDays = calculateStreak(activities);
+
     return {
       weeklyData,
       completionRate,
       totalTasks: tasks.length,
       totalNotes: notes.length,
-      streakDays: 3, // Mock streak calculation
+      streakDays,
     };
-  }, [tasks, notes]);
+  }, [tasks, notes, getRecentActivities]);
 
   const noteStats = useMemo(() => {
     const today = new Date();
@@ -256,7 +274,13 @@ const Dashboard = () => {
     <div className="px-6 py-8 space-y-6 container">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">{getTimeBasedGreeting()}, Jay!</h1>
+        <h1 className="text-3xl font-bold">
+          {getTimeBasedGreeting()}
+          {profile.firstName || profile.lastName
+            ? `, ${profile.firstName} ${profile.lastName}`
+            : ""}
+          !
+        </h1>
         <p className="text-muted-foreground">{getMotivationalText()}</p>
       </div>
 
@@ -347,6 +371,19 @@ const Dashboard = () => {
                       <span className="text-sm">
                         Streak: {productivityMetrics.streakDays} days
                       </span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <InfoIcon className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-sm">
+                              Your streak is calculated based on consecutive
+                              days of creating or completing tasks and notes.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </div>
                 </div>
@@ -484,7 +521,7 @@ const Dashboard = () => {
                 variant="outline"
                 size="sm"
                 className="h-7"
-                onClick={() => navigate("/tasks")}
+                onClick={toggleVisibility}
               >
                 View all
               </Button>
@@ -499,7 +536,7 @@ const Dashboard = () => {
                   variant="outline"
                   size="sm"
                   className="mt-2"
-                  onClick={() => navigate("/tasks")}
+                  onClick={openAddTask}
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
                   Add Task
@@ -619,23 +656,34 @@ const Dashboard = () => {
           <CardContent className="space-y-3 border border-muted-foreground/25 rounded-lg p-6">
             <ScrollArea className="max-h-80">
               <div className="space-y-4 max-h-80 pr-2">
-                {recentActivity.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-start space-x-3 border-b border-muted-foreground/10 pb-4 last:border-b-0"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 bg-muted rounded-full flex items-center justify-center text-sm">
-                      {activity.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm">{activity.description}</p>
-                      <p className="text-xs text-muted-foreground flex items-center mt-1">
-                        <ClockIcon className="h-3 w-3 mr-1" />
-                        {activity.time}
-                      </p>
-                    </div>
+                {recentActivity.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-8 text-muted-foreground opacity-70">
+                    <Ghost className="w-10 h-10 mb-2" />
+                    <p className="text-sm">
+                      No recent activity yet.
+                      <br />
+                      Your actions will show up here!
+                    </p>
                   </div>
-                ))}
+                ) : (
+                  recentActivity.map((activity) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-start space-x-3 border-b border-muted-foreground/10 pb-4 last:border-b-0"
+                    >
+                      <div className="flex-shrink-0 w-8 h-8 bg-muted rounded-full flex items-center justify-center text-sm">
+                        {activity.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm">{activity.description}</p>
+                        <p className="text-xs text-muted-foreground flex items-center mt-1">
+                          <ClockIcon className="h-3 w-3 mr-1" />
+                          {activity.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </ScrollArea>
           </CardContent>

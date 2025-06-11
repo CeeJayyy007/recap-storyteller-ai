@@ -31,8 +31,9 @@ import { Task } from "@/types/task";
 export function AddTaskToNoteModal() {
   const { isAddTaskToNoteOpen, selectedNote, closeAddTaskToNote } =
     useModalStore();
-  const { tasks, linkTaskToNote } = useTaskStore();
+  const { tasks } = useTaskStore();
   const { updateNote } = useNoteStore();
+  const { linkTaskToNote } = useTaskStore();
 
   const [isTaskOpen, setIsTaskOpen] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useTaskStore } from "./task-store";
 
 interface ProfileData {
   firstName: string;
@@ -17,20 +18,21 @@ interface ProfileState {
   profile: ProfileData;
   updateProfile: (updates: Partial<ProfileData>) => void;
   updateProfileImage: (imageUrl: string) => void;
+  initializeProfile: () => void;
 }
 
 export const useProfileStore = create<ProfileState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       profile: {
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@example.com",
-        bio: "Passionate productivity enthusiast who loves organizing tasks and achieving goals efficiently. Always looking for ways to optimize workflows and help teams succeed.",
-        company: "Productivity Co.",
-        role: "Senior Product Manager",
-        location: "San Francisco, CA",
-        joinedDate: "2023-01-15",
+        firstName: "New",
+        lastName: "User",
+        email: "user@example.com",
+        bio: "Welcome to your productivity journey! Update your profile to personalize your experience.",
+        company: "Your Company",
+        role: "Your Role",
+        location: "Your Location",
+        joinedDate: new Date().toISOString(),
         profileImage: "/placeholder-avatar.jpg",
       },
 
@@ -43,6 +45,27 @@ export const useProfileStore = create<ProfileState>()(
       updateProfileImage: (imageUrl) => {
         set((state) => ({
           profile: { ...state.profile, profileImage: imageUrl },
+        }));
+      },
+
+      initializeProfile: () => {
+        const taskStore = useTaskStore.getState();
+        const tasks = taskStore.tasks;
+
+        // Find the earliest task creation date
+        const firstTaskDate =
+          tasks.length > 0
+            ? tasks.reduce((earliest, task) => {
+                const taskDate = new Date(task.createdAt);
+                return taskDate < earliest ? taskDate : earliest;
+              }, new Date(tasks[0].createdAt))
+            : new Date();
+
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            joinedDate: firstTaskDate.toISOString(),
+          },
         }));
       },
     }),

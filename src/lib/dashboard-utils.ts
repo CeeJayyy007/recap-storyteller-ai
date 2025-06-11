@@ -1,4 +1,5 @@
 import { useActivityStore } from "@/stores/activity-store";
+import { subDays, isSameDay, isToday } from "date-fns";
 
 export const getTimeBasedGreeting = () => {
   const hour = new Date().getHours();
@@ -8,17 +9,47 @@ export const getTimeBasedGreeting = () => {
 };
 
 export const getMotivationalText = () => {
-  const quotes = [
-    "The only way to do great work is to love what you do.",
-    "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-    "Believe you can and you're halfway there.",
-    "Don't watch the clock; do what it does. Keep going.",
-    "The future depends on what you do today.",
+  const texts = [
+    "Every task completed is a step forward.",
+    "Small progress is still progress.",
+    "You're doing great! Keep going.",
+    "Focus on progress, not perfection.",
+    "One task at a time, you've got this!",
   ];
-  return quotes[Math.floor(Math.random() * quotes.length)];
+  return texts[Math.floor(Math.random() * texts.length)];
 };
 
 export const getRecentActivity = () => {
   const { getRecentActivities } = useActivityStore.getState();
   return getRecentActivities(5);
+};
+
+export const calculateStreak = (activities: Array<{ timestamp: string }>) => {
+  if (activities.length === 0) return 0;
+
+  const today = new Date();
+  const dates = activities.map((activity) => new Date(activity.timestamp));
+  dates.sort((a, b) => b.getTime() - a.getTime()); // Sort in descending order
+
+  let streak = 0;
+  let currentDate = today;
+
+  // Check if there's activity today
+  const hasActivityToday = dates.some((date) => isToday(date));
+  if (!hasActivityToday) {
+    currentDate = subDays(currentDate, 1);
+  }
+
+  // Count consecutive days with activity
+  while (true) {
+    const hasActivityOnDate = dates.some((date) =>
+      isSameDay(date, currentDate)
+    );
+    if (!hasActivityOnDate) break;
+
+    streak++;
+    currentDate = subDays(currentDate, 1);
+  }
+
+  return streak;
 };

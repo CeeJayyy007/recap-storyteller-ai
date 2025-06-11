@@ -15,6 +15,7 @@ interface TaskState {
   uncompleteTask: (id: string) => void;
   searchTasksByTitle: (query: string) => Task[];
   unlinkTaskFromNote: (taskId: string) => void;
+  linkTaskToNote: (taskId: string, noteId: string) => void;
 }
 
 export const useTaskStore = create<TaskState>()(
@@ -149,6 +150,14 @@ export const useTaskStore = create<TaskState>()(
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === taskId ? { ...task, linkedNoteId: null } : task
+          ),
+        }));
+      },
+
+      linkTaskToNote: (taskId: string, noteId: string) => {
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === taskId ? { ...task, linkedNoteId: noteId } : task
           ),
         }));
       },
