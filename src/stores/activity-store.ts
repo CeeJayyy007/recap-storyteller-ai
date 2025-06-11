@@ -5,6 +5,7 @@ export interface ActivityLog {
   id: string;
   type:
     | "task_created"
+    | "task_updated"
     | "task_completed"
     | "task_deleted"
     | "note_created"
@@ -41,7 +42,7 @@ export const useActivityStore = create<ActivityState>()(
         };
 
         set((state) => ({
-          activities: [newActivity, ...state.activities].slice(0, 50), // Keep last 50 activities
+          activities: [newActivity, ...state.activities].slice(0, 100), // Keep last 100 activities
         }));
       },
 
@@ -61,18 +62,20 @@ export const useActivityStore = create<ActivityState>()(
 
 // Helper functions to create specific activity types
 export const createTaskActivity = (
-  type: "task_created" | "task_completed" | "task_deleted",
+  type: "task_created" | "task_updated" | "task_completed" | "task_deleted",
   taskTitle: string,
   taskId: string
 ) => {
   const icons = {
     task_created: "➕",
+    task_updated: "✏️",
     task_completed: "✅",
     task_deleted: "🗑️",
   };
 
   const descriptions = {
     task_created: `Added new task: "${taskTitle}"`,
+    task_updated: `Updated task: "${taskTitle}"`,
     task_completed: `Completed task: "${taskTitle}"`,
     task_deleted: `Removed task: "${taskTitle}"`,
   };
@@ -92,7 +95,6 @@ export const createNoteActivity = (
 ) => {
   const icons = {
     note_created: "📝",
-
     note_updated: "✏️",
     note_deleted: "🗑️",
   };

@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Check, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const PricingSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section
       id="pricing"
@@ -78,6 +81,7 @@ export const PricingSection = () => {
             <Button
               variant="outline"
               className="w-full font-nunito border-2 mt-auto"
+              onClick={() => navigate("/dashboard")}
             >
               Get Started Free
             </Button>
@@ -133,7 +137,10 @@ export const PricingSection = () => {
               </li>
             </ul>
 
-            <Button className="w-full bg-white text-blue-600 hover:bg-gray-100 font-nunito font-semibold mt-auto">
+            <Button
+              className="w-full bg-white text-blue-600 hover:bg-gray-100 font-nunito font-semibold mt-auto"
+              onClick={() => alert("Coming soon")}
+            >
               Upgrade to Pro
             </Button>
           </div>

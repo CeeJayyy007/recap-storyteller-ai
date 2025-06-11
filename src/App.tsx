@@ -16,6 +16,7 @@ import Help from "./pages/Help";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { NoteEditor } from "@/components/notes/NoteEditor";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,15 @@ const App = () => (
             element={
               <AppLayout>
                 <NoteEditor />
+              </AppLayout>
+            }
+          />
+          {/* Admin route */}
+          <Route
+            path="/admin"
+            element={
+              <AppLayout>
+                <AdminDashboard />
               </AppLayout>
             }
           />

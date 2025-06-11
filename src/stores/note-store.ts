@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Note } from "@/types/note";
-import { mockNotes } from "@/data/mockNotes";
 import { useActivityStore, createNoteActivity } from "@/stores/activity-store";
 
 interface NoteState {
@@ -19,7 +18,7 @@ interface NoteState {
 export const useNoteStore = create<NoteState>()(
   persist(
     (set, get) => ({
-      notes: mockNotes,
+      notes: [],
 
       addNote: (note) => {
         const newNote: Note = {
@@ -33,7 +32,11 @@ export const useNoteStore = create<NoteState>()(
         // Log activity
         const activityStore = useActivityStore.getState();
         activityStore.addActivity(
-          createNoteActivity("note_created", newNote.title, newNote.id)
+          createNoteActivity(
+            "note_created",
+            newNote.title || "Untitled Note",
+            newNote.id
+          )
         );
 
         return newNote;
@@ -51,30 +54,6 @@ export const useNoteStore = create<NoteState>()(
           ),
         }));
 
-        // Log activity only for significant updates (not every character change)
-        if (note && updates.title && updates.title !== note.title) {
-          // Only log if the title change is substantial (more than 3 characters difference or final title is meaningful)
-          const titleLength = updates.title.trim().length;
-          const previousLength = note.title?.trim().length || 0;
-          const lengthDifference = Math.abs(titleLength - previousLength);
-
-          // Log if it's a substantial change (new title is meaningful) or major length change
-          if (titleLength >= 3 && (lengthDifference >= 3 || titleLength >= 5)) {
-            const activityStore = useActivityStore.getState();
-            const actionType = note.title ? "note_updated" : "note_created";
-            const description = note.title
-              ? `Renamed note to "${updates.title}"`
-              : `Created note "${updates.title}"`;
-
-            activityStore.addActivity({
-              type: actionType,
-              description,
-              icon: note.title ? "✏️" : "📝",
-              metadata: { noteId: note.id, noteTitle: updates.title },
-            });
-          }
-        }
-
         // Log content updates (when content is significantly changed)
         if (note && updates.content && updates.content !== note.content) {
           // Only log major content changes to avoid spam
@@ -85,14 +64,13 @@ export const useNoteStore = create<NoteState>()(
           if (contentString.length >= 10) {
             // Only log if content has substance
             const activityStore = useActivityStore.getState();
-            activityStore.addActivity({
-              type: "note_updated",
-              description: `Updated content in "${
-                note.title || "Untitled Note"
-              }"`,
-              icon: "📝",
-              metadata: { noteId: note.id, noteTitle: note.title },
-            });
+            activityStore.addActivity(
+              createNoteActivity(
+                "note_updated",
+                note.title || "Untitled Note",
+                note.id
+              )
+            );
           }
         }
       },
@@ -109,7 +87,11 @@ export const useNoteStore = create<NoteState>()(
         if (note) {
           const activityStore = useActivityStore.getState();
           activityStore.addActivity(
-            createNoteActivity("note_deleted", note.title, note.id)
+            createNoteActivity(
+              "note_deleted",
+              note.title || "Untitled Note",
+              note.id
+            )
           );
         }
       },

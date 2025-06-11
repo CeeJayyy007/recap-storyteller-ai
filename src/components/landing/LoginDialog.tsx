@@ -1,20 +1,32 @@
-
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Chrome } from "lucide-react";
+import { SignupDialog } from "./SignupDialog";
 
 interface LoginDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSignupClick: () => void;
 }
 
-export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
+export const LoginDialog = ({
+  open,
+  onOpenChange,
+  onSignupClick,
+}: LoginDialogProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +49,9 @@ export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
           <p className="text-gray-600 dark:text-gray-300 font-nunito">
             Sign in to your account to continue
           </p>
+          <DialogDescription className="sr-only">
+            Sign in to your account to continue
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -47,7 +62,9 @@ export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
             className="w-full h-12 border-2 border-gray-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-300 group"
           >
             <Chrome className="w-5 h-5 mr-3 text-blue-600 group-hover:scale-110 transition-transform" />
-            <span className="font-medium font-nunito">Continue with Google</span>
+            <span className="font-medium font-nunito">
+              Continue with Google
+            </span>
           </Button>
 
           <div className="relative">
@@ -64,7 +81,10 @@ export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
           {/* Email/Password Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium font-nunito">
+              <Label
+                htmlFor="email"
+                className="text-gray-700 dark:text-gray-300 font-medium font-nunito"
+              >
                 Email Address
               </Label>
               <div className="relative">
@@ -82,7 +102,10 @@ export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-medium font-nunito">
+              <Label
+                htmlFor="password"
+                className="text-gray-700 dark:text-gray-300 font-medium font-nunito"
+              >
                 Password
               </Label>
               <div className="relative">
@@ -101,7 +124,11 @@ export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -112,9 +139,14 @@ export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
                   type="checkbox"
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-600 dark:text-gray-300 font-nunito">Remember me</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-nunito">
+                  Remember me
+                </span>
               </label>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-500 font-medium font-nunito">
+              <a
+                href="#"
+                className="text-sm text-blue-600 hover:text-blue-500 font-medium font-nunito"
+              >
                 Forgot password?
               </a>
             </div>
@@ -130,16 +162,18 @@ export const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
           <p className="text-center text-sm text-gray-600 dark:text-gray-300 font-nunito">
             Don't have an account?{" "}
             <button
-              onClick={() => {
-                onOpenChange(false);
-                // Open signup dialog - you'll need to implement this
-              }}
+              onClick={onSignupClick}
               className="text-blue-600 hover:text-blue-500 font-medium"
             >
               Sign up here
             </button>
           </p>
         </div>
+        <SignupDialog
+          open={isSignupOpen}
+          onOpenChange={setIsSignupOpen}
+          onLoginClick={() => setIsSignupOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

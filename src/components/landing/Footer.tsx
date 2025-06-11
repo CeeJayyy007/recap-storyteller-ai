@@ -10,14 +10,14 @@ export const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="relative">
+              <a href="#home" className="relative">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
                   <span className="text-white font-bold text-lg font-space">
                     R
                   </span>
                 </div>
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></div>
-              </div>
+              </a>
               <span className="font-bold text-xl text-gray-900 dark:text-white font-space">
                 Recap
               </span>
@@ -36,7 +36,7 @@ export const Footer = () => {
             <ul className="space-y-3 text-gray-600 dark:text-gray-300">
               <li>
                 <a
-                  href="#"
+                  href="#features"
                   className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
                 >
                   Features
@@ -44,26 +44,18 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="#testimonials"
+                  className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
+                >
+                  Testimonials
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#pricing"
                   className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
                 >
                   Pricing
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
-                >
-                  Demo
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
-                >
-                  API
                 </a>
               </li>
             </ul>
@@ -76,7 +68,7 @@ export const Footer = () => {
             <ul className="space-y-3 text-gray-600 dark:text-gray-300">
               <li>
                 <a
-                  href="#"
+                  href="/help"
                   className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
                 >
                   Privacy Policy
@@ -84,7 +76,7 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/help"
                   className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
                 >
                   Terms of Service
@@ -92,7 +84,7 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/help"
                   className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
                 >
                   About Us
@@ -100,7 +92,7 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/help"
                   className="hover:text-gray-900 dark:hover:text-white transition-colors font-nunito"
                 >
                   Contact
@@ -133,7 +125,7 @@ export const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-gray-100 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 dark:text-gray-300 text-sm font-nunito">
-            © 2024 Recap, Inc. All rights reserved.
+            © 2025 Recap, Inc. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a

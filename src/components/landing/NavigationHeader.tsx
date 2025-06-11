@@ -4,10 +4,23 @@ import { useState } from "react";
 import { LoginDialog } from "./LoginDialog";
 import { SignupDialog } from "./SignupDialog";
 import { Logo } from "../common/Logo";
+import { useNavigate } from "react-router-dom";
 
 export const NavigationHeader = () => {
+  const navigate = useNavigate();
+
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+
+  const handleLoginClick = () => {
+    setIsLoginOpen(true);
+    setIsSignupOpen(false);
+  };
+
+  const handleSignupClick = () => {
+    setIsSignupOpen(true);
+    setIsLoginOpen(false);
+  };
 
   return (
     <>
@@ -16,18 +29,15 @@ export const NavigationHeader = () => {
           <div className="px-6">
             <div className="flex items-center justify-between h-16">
               {/* Logo */}
-              <div className="flex items-center space-x-3">
-                {/* <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-xl transform rotate-3 hover:rotate-6 transition-all duration-300">
-                    <span className="text-white font-bold text-xl font-space">R</span>
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
-                </div> */}
+              <a
+                href="#home"
+                className="flex items-center space-x-3 cursor-pointer"
+              >
                 <Logo />
                 <span className="font-bold text-2xl text-gray-900 dark:text-white font-space">
                   Recap
                 </span>
-              </div>
+              </a>
 
               {/* Navigation */}
               <nav className="hidden md:flex items-center space-x-2">
@@ -39,19 +49,26 @@ export const NavigationHeader = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
                 <a
+                  href="#testimonials"
+                  className="relative px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium font-nunito transition-all duration-300 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-slate-800 dark:hover:to-slate-700 group"
+                >
+                  <span className="relative z-10">Testimonials</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </a>
+                <a
                   href="#pricing"
                   className="relative px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium font-nunito transition-all duration-300 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-slate-800 dark:hover:to-slate-700 group"
                 >
                   <span className="relative z-10">Pricing</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
-                <a
+                {/* <a
                   href="#faq"
                   className="relative px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium font-nunito transition-all duration-300 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-slate-800 dark:hover:to-slate-700 group"
                 >
                   <span className="relative z-10">FAQ</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </a>
+                </a> */}
               </nav>
 
               {/* CTA Buttons & Dark Mode Toggle */}
@@ -59,13 +76,13 @@ export const NavigationHeader = () => {
                 <DarkModeToggle />
                 <Button
                   variant="ghost"
-                  onClick={() => setIsLoginOpen(true)}
+                  onClick={handleLoginClick}
                   className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-nunito hidden sm:inline-flex"
                 >
                   Sign In
                 </Button>
                 <Button
-                  onClick={() => setIsSignupOpen(true)}
+                  onClick={handleSignupClick}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 text-sm font-medium font-nunito shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   Get Started
@@ -79,8 +96,19 @@ export const NavigationHeader = () => {
       {/* Add top padding to main content to account for floating header */}
       <div className="h-24"></div>
 
-      <LoginDialog open={isLoginOpen} onOpenChange={setIsLoginOpen} />
-      <SignupDialog open={isSignupOpen} onOpenChange={setIsSignupOpen} />
+      <LoginDialog
+        open={isLoginOpen}
+        onOpenChange={setIsLoginOpen}
+        onSignupClick={handleSignupClick}
+      />
+      <SignupDialog
+        open={isSignupOpen}
+        onOpenChange={setIsSignupOpen}
+        onLoginClick={() => {
+          setIsSignupOpen(false);
+          setIsLoginOpen(true);
+        }}
+      />
     </>
   );
 };

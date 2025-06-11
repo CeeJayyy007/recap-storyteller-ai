@@ -2,32 +2,24 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   PlusIcon,
-  FolderIcon,
-  CheckIcon,
   FileTextIcon,
-  ClockIcon,
   StarIcon,
   CheckCircleIcon,
-  NotebookPenIcon,
   File,
-  ChartLine,
   TrendingUp,
   Target,
-  Activity,
   Calendar,
-  AlertCircle,
-  RotateCcw,
   Plus,
   Eye,
   Edit,
   Zap,
   BarChart3,
   RotateCw,
+  ClockIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { useTaskStore } from "@/stores/task-store";
@@ -36,12 +28,12 @@ import { useActivityStore } from "@/stores/activity-store";
 import {
   getTimeBasedGreeting,
   getMotivationalText,
-  getMockRecentActivity,
+  getRecentActivity,
 } from "@/lib/dashboard-utils";
-import { formatDate, cn } from "@/lib/utils";
-import { NotesCard } from "@/components/notes/NotesCard";
+import { cn } from "@/lib/utils";
 import { Task, getTaskStatusForDate } from "@/types/task";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { NotesCard } from "@/components/notes/NotesCard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -160,7 +152,7 @@ const Dashboard = () => {
 
     // If no real activities, fallback to mock data
     if (activities.length === 0) {
-      return getMockRecentActivity();
+      return getRecentActivity();
     }
 
     // Format real activities for display

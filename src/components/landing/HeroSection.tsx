@@ -1,9 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
-    <section className="py-20 lg:py-32  dark:bg-slate-950 transition-colors">
+    <section
+      id="home"
+      className="py-20 lg:py-32  dark:bg-slate-950 transition-colors"
+    >
       <div className="container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
@@ -29,6 +35,7 @@ export const HeroSection = () => {
             <Button
               size="lg"
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-medium font-nunito shadow-xl hover:shadow-2xl transition-all group"
+              onClick={() => navigate("/dashboard")}
             >
               Start Tracking Free
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -38,6 +45,7 @@ export const HeroSection = () => {
               variant="outline"
               size="lg"
               className="px-8 py-4 text-lg font-medium font-nunito border-2 hover:bg-gray-50 dark:hover:bg-slate-800 group"
+              onClick={() => navigate("/recap")}
             >
               <Play className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
               Try Sample Recap

@@ -14,6 +14,7 @@ import {
   Sun,
   Moon,
   ListRestart,
+  Shield,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -84,6 +85,12 @@ const navigationFooterItems: NavigationItem[] = [
     icon: Bolt,
     label: "Settings",
     key: "settings",
+  },
+  {
+    href: "/admin",
+    icon: Shield,
+    label: "Admin",
+    key: "admin",
   },
 ];
 

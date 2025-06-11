@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Task, getTaskStatusForDate } from "@/types/task";
-import { mockTasks } from "@/data/mockTasks";
+import { Task } from "@/types/task";
 import { useActivityStore, createTaskActivity } from "@/stores/activity-store";
 
 interface TaskState {
@@ -9,19 +8,19 @@ interface TaskState {
   addTask: (task: Omit<Task, "id" | "createdAt" | "updatedAt">) => Task;
   updateTask: (id: string, updates: Partial<Omit<Task, "id">>) => void;
   deleteTask: (id: string) => void;
-  completeTask: (id: string, completionDate?: string) => void;
-  uncompleteTask: (id: string) => void;
+  getTaskById: (id: string) => Task | undefined;
   getTasksForDate: (date: string) => Task[];
   getTasksForDateRange: (startDate: string, endDate: string) => Task[];
-  getTaskById: (id: string) => Task | undefined;
-  linkTaskToNote: (taskId: string, noteId: string) => void;
+  completeTask: (id: string) => void;
+  uncompleteTask: (id: string) => void;
+  searchTasksByTitle: (query: string) => Task[];
   unlinkTaskFromNote: (taskId: string) => void;
 }
 
 export const useTaskStore = create<TaskState>()(
   persist(
     (set, get) => ({
-      tasks: mockTasks,
+      tasks: [],
 
       addTask: (task) => {
         const newTask: Task = {
@@ -42,6 +41,9 @@ export const useTaskStore = create<TaskState>()(
       },
 
       updateTask: (id, updates) => {
+        // Get task details for logging
+        const task = get().getTaskById(id);
+
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === id
@@ -49,6 +51,14 @@ export const useTaskStore = create<TaskState>()(
               : task
           ),
         }));
+
+        // Log activity if title or description changed
+        if (task && (updates.title || updates.description)) {
+          const activityStore = useActivityStore.getState();
+          activityStore.addActivity(
+            createTaskActivity("task_updated", task.title, task.id)
+          );
+        }
       },
 
       deleteTask: (id) => {
@@ -68,38 +78,57 @@ export const useTaskStore = create<TaskState>()(
         }
       },
 
-      completeTask: (id, completionDate) => {
-        const completedAt = completionDate
-          ? new Date(completionDate).toISOString()
-          : new Date().toISOString();
+      getTaskById: (id) => {
+        return get().tasks.find((task) => task.id === id);
+      },
 
-        // Get task details for logging
+      getTasksForDate: (date) => {
+        return get().tasks.filter((task) => {
+          const taskDate = task.createdAt.split("T")[0];
+          return taskDate === date;
+        });
+      },
+
+      getTasksForDateRange: (startDate: string, endDate: string) => {
+        return get().tasks.filter((task) => {
+          const taskDate = task.createdAt.split("T")[0];
+          return taskDate >= startDate && taskDate <= endDate;
+        });
+      },
+
+      completeTask: (id) => {
         const task = get().getTaskById(id);
+        if (!task) return;
 
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === id
-              ? { ...task, completedAt, updatedAt: new Date().toISOString() }
+              ? {
+                  ...task,
+                  completedAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                }
               : task
           ),
         }));
 
         // Log activity
-        if (task) {
-          const activityStore = useActivityStore.getState();
-          activityStore.addActivity(
-            createTaskActivity("task_completed", task.title, task.id)
-          );
-        }
+        const activityStore = useActivityStore.getState();
+        activityStore.addActivity(
+          createTaskActivity("task_completed", task.title, task.id)
+        );
       },
 
       uncompleteTask: (id) => {
+        const task = get().getTaskById(id);
+        if (!task) return;
+
         set((state) => ({
           tasks: state.tasks.map((task) =>
             task.id === id
               ? {
                   ...task,
-                  completedAt: undefined,
+                  completedAt: null,
                   updatedAt: new Date().toISOString(),
                 }
               : task
@@ -107,60 +136,19 @@ export const useTaskStore = create<TaskState>()(
         }));
       },
 
-      getTasksForDate: (date) => {
+      searchTasksByTitle: (query) => {
         const { tasks } = get();
-        return tasks.filter((task) => {
-          const status = getTaskStatusForDate(task, date);
-          return status !== null;
-        });
+        if (!query.trim()) return tasks;
+
+        return tasks.filter((task) =>
+          task.title.toLowerCase().includes(query.toLowerCase())
+        );
       },
 
-      getTasksForDateRange: (startDate, endDate) => {
-        const { tasks } = get();
-        return tasks.filter((task) => {
-          const createdDate = task.createdAt.split("T")[0];
-          const completedDate = task.completedAt
-            ? task.completedAt.split("T")[0]
-            : null;
-
-          // Task overlaps with date range if:
-          // - Created before or during range AND
-          // - Not completed OR completed during or after range start
-          return (
-            createdDate <= endDate &&
-            (!completedDate || completedDate >= startDate)
-          );
-        });
-      },
-
-      getTaskById: (id) => {
-        return get().tasks.find((task) => task.id === id);
-      },
-
-      linkTaskToNote: (taskId, noteId) => {
+      unlinkTaskFromNote: (taskId: string) => {
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === taskId
-              ? {
-                  ...task,
-                  linkedNoteId: noteId,
-                  updatedAt: new Date().toISOString(),
-                }
-              : task
-          ),
-        }));
-      },
-
-      unlinkTaskFromNote: (taskId) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === taskId
-              ? {
-                  ...task,
-                  linkedNoteId: null,
-                  updatedAt: new Date().toISOString(),
-                }
-              : task
+            task.id === taskId ? { ...task, linkedNoteId: null } : task
           ),
         }));
       },

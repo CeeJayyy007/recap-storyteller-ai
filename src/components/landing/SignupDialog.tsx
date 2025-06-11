@@ -1,5 +1,10 @@
-
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,16 +14,21 @@ import { Eye, EyeOff, Mail, Lock, User, Chrome } from "lucide-react";
 interface SignupDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onLoginClick: () => void;
 }
 
-export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
+export const SignupDialog = ({
+  open,
+  onOpenChange,
+  onLoginClick,
+}: SignupDialogProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,7 +47,7 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -50,6 +60,9 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
           <p className="text-gray-600 dark:text-gray-300 font-nunito">
             Create your account and start building amazing stories
           </p>
+          <DialogDescription className="sr-only">
+            Create your account and start building amazing stories
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -77,7 +90,10 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
           {/* Email/Password Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-700 dark:text-gray-300 font-medium font-nunito">
+              <Label
+                htmlFor="name"
+                className="text-gray-700 dark:text-gray-300 font-medium font-nunito"
+              >
                 Full Name
               </Label>
               <div className="relative">
@@ -95,7 +111,10 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium font-nunito">
+              <Label
+                htmlFor="email"
+                className="text-gray-700 dark:text-gray-300 font-medium font-nunito"
+              >
                 Email Address
               </Label>
               <div className="relative">
@@ -113,7 +132,10 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-medium font-nunito">
+              <Label
+                htmlFor="password"
+                className="text-gray-700 dark:text-gray-300 font-medium font-nunito"
+              >
                 Password
               </Label>
               <div className="relative">
@@ -122,7 +144,9 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   className="pl-10 pr-12 h-12 border-2 border-gray-200 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-800 rounded-xl font-nunito"
                   placeholder="Create a password"
                   required
@@ -132,13 +156,20 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300 font-medium font-nunito">
+              <Label
+                htmlFor="confirmPassword"
+                className="text-gray-700 dark:text-gray-300 font-medium font-nunito"
+              >
                 Confirm Password
               </Label>
               <div className="relative">
@@ -147,7 +178,9 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("confirmPassword", e.target.value)
+                  }
                   className="pl-10 pr-12 h-12 border-2 border-gray-200 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-800 rounded-xl font-nunito"
                   placeholder="Confirm your password"
                   required
@@ -157,7 +190,11 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -169,13 +206,22 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
                 required
               />
-              <label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-300 font-nunito">
+              <label
+                htmlFor="terms"
+                className="text-sm text-gray-600 dark:text-gray-300 font-nunito"
+              >
                 I agree to the{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500 font-medium">
+                <a
+                  href="#"
+                  className="text-blue-600 hover:text-blue-500 font-medium"
+                >
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500 font-medium">
+                <a
+                  href="#"
+                  className="text-blue-600 hover:text-blue-500 font-medium"
+                >
                   Privacy Policy
                 </a>
               </label>
@@ -192,10 +238,7 @@ export const SignupDialog = ({ open, onOpenChange }: SignupDialogProps) => {
           <p className="text-center text-sm text-gray-600 dark:text-gray-300 font-nunito">
             Already have an account?{" "}
             <button
-              onClick={() => {
-                onOpenChange(false);
-                // Open login dialog - you'll need to implement this
-              }}
+              onClick={onLoginClick}
               className="text-blue-600 hover:text-blue-500 font-medium"
             >
               Sign in here
