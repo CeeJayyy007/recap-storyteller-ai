@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+# Recap Storyteller AI
 
-## Project info
+A modern task management and note-taking application with AI-powered recap generation.
 
-**URL**: https://lovable.dev/projects/0052c8e8-7770-43f5-9660-5005382f9331
+## Features
 
-## How can I edit this code?
+- 📝 Task Management with Calendar Integration
+- 📓 Rich Text Note Taking
+- 🔄 Task-Note Linking
+- 🤖 AI-Powered Recap Generation
+- 🌓 Dark/Light Mode
+- 📱 Responsive Design
+- 🔒 Secure Admin Access
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **UI**: Shadcn UI + Radix UI
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Authentication**: NextAuth.js
+- **Database**: Prisma + PostgreSQL
+- **AI Integration**: OpenAI API
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0052c8e8-7770-43f5-9660-5005382f9331) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Clone the repository:
 
-**Use your preferred IDE**
+```bash
+git clone https://github.com/yourusername/recap-storyteller-ai.git
+cd recap-storyteller-ai
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. Install dependencies:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+npm install
+```
 
-Follow these steps:
+3. Set up environment variables:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```bash
+cp .env.example .env.local
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. Start the development server:
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Environment Variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Required environment variables:
 
-**Use GitHub Codespaces**
+- `DATABASE_URL`: PostgreSQL connection string
+- `NEXTAUTH_SECRET`: NextAuth.js secret
+- `OPENAI_API_KEY`: OpenAI API key
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── app/              # Next.js app router pages
+├── components/       # React components
+├── lib/             # Utility functions
+├── stores/          # Zustand stores
+├── types/           # TypeScript types
+└── styles/          # Global styles
+```
 
-This project is built with:
+## Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/0052c8e8-7770-43f5-9660-5005382f9331) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
