@@ -28,7 +28,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Logo } from "@/components/common/Logo";
+import { Logo } from "../common/Logo";
 import { Separator } from "@/components/ui/separator";
 import { useThemeStore } from "@/stores/theme-store";
 import { useProfileStore } from "@/stores/profile-store";
