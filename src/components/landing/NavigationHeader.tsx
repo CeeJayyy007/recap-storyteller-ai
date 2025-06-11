@@ -3,7 +3,7 @@ import { DarkModeToggle } from "./DarkModeToggle";
 import { useState } from "react";
 import { LoginDialog } from "./LoginDialog";
 import { SignupDialog } from "./SignupDialog";
-import { Logo } from "../common/Logo";
+import { Logo } from "@/components/common/Logo";
 import { useNavigate } from "react-router-dom";
 
 export const NavigationHeader = () => {
