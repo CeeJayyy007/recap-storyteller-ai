@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Logo } from "@/components/common/Logo";
 
 interface SplashScreenProps {
   isVisible: boolean;
