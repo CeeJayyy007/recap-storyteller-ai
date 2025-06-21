@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { useDateStore } from "@/stores/date-store";
 import { useTaskStore } from "@/stores/task-store";
+import { getTaskStatusForDate } from "@/types/task";
 import { cn } from "@/lib/utils";
 
 const DAYS_OF_WEEK = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -45,7 +46,7 @@ export function Calendar() {
     goToNextDay,
   } = useDateStore();
 
-  const { getTasksForDate } = useTaskStore();
+  const { tasks } = useTaskStore();
 
   const formatSelectedDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
@@ -131,7 +132,11 @@ export function Calendar() {
 
   const hasTasksForDate = (date: Date) => {
     const dateString = date.toISOString().split("T")[0];
-    return getTasksForDate(dateString).length > 0;
+    // Check if any tasks have a valid status for this date (including carried-over tasks)
+    return tasks.some((task) => {
+      const status = getTaskStatusForDate(task, dateString);
+      return status !== null;
+    });
   };
 
   const days = getDaysInMonth(currentMonth);

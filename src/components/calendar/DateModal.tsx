@@ -29,17 +29,23 @@ import { Task } from "@/types/task";
 export function DateModal() {
   const { isDateModalOpen, selectedDate, closeDateModal, openAddTask } =
     useModalStore();
-  const { getTasksForDate } = useTaskStore();
+  const { tasks } = useTaskStore();
   const { getNotesForDate } = useNoteStore();
   const { setSelectedDate } = useDateStore();
 
   if (!selectedDate) return null;
 
   const date = new Date(selectedDate);
-  const tasks = getTasksForDate(selectedDate);
+
+  // Get all tasks and filter them using getTaskStatusForDate to show carried-over tasks correctly
+  const tasksForDate = tasks.filter((task) => {
+    const status = getTaskStatusForDate(task, selectedDate);
+    return status !== null; // Only show tasks that have a valid status for this date
+  });
+
   const notes = getNotesForDate(selectedDate);
 
-  const tasksByStatus = tasks.reduce((acc, task) => {
+  const tasksByStatus = tasksForDate.reduce((acc, task) => {
     const status = getTaskStatusForDate(task, selectedDate);
     if (status) {
       if (!acc[status]) acc[status] = [];
@@ -218,7 +224,7 @@ export function DateModal() {
             {/* Notes */}
             {notes.length > 0 && (
               <>
-                {tasks.length > 0 && <Separator />}
+                {tasksForDate.length > 0 && <Separator />}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-purple-600 dark:text-purple-400" />
@@ -259,7 +265,7 @@ export function DateModal() {
             )}
 
             {/* Empty State */}
-            {tasks.length === 0 && notes.length === 0 && (
+            {tasksForDate.length === 0 && notes.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
                 <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p className="text-lg font-medium mb-1">

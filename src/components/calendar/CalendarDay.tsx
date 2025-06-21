@@ -18,18 +18,23 @@ export function CalendarDay({
   isToday,
   isSelected,
 }: CalendarDayProps) {
-  const { getTasksForDate } = useTaskStore();
+  const { tasks } = useTaskStore();
   const { getNotesForDate } = useNoteStore();
   const { openDateModal } = useModalStore();
 
   const dateString = format(date, "yyyy-MM-dd");
   const dayNumber = format(date, "d");
 
-  const tasks = getTasksForDate(dateString);
+  // Get all tasks and filter them using getTaskStatusForDate to show carried-over tasks correctly
+  const tasksForDate = tasks.filter((task) => {
+    const status = getTaskStatusForDate(task, dateString);
+    return status !== null; // Only show tasks that have a valid status for this date
+  });
+
   const notes = getNotesForDate(dateString);
 
   // Calculate task status counts
-  const taskCounts = tasks.reduce((acc, task) => {
+  const taskCounts = tasksForDate.reduce((acc, task) => {
     const status = getTaskStatusForDate(task, dateString);
     if (status) {
       acc[status] = (acc[status] || 0) + 1;
@@ -43,16 +48,13 @@ export function CalendarDay({
 
   // Get first few items to show as preview
   const previewItems = [
-    ...tasks
-      .slice(0, 2)
-      .map((task) => ({
-        id: task.id,
-        title: task.title,
-        type: "task" as const,
-        status: getTaskStatusForDate(task, dateString),
-        time: format(new Date(task.createdAt), "h:mm a"),
-      }))
-      .filter((item) => item.status !== null), // Only show tasks with valid status
+    ...tasksForDate.slice(0, 2).map((task) => ({
+      id: task.id,
+      title: task.title,
+      type: "task" as const,
+      status: getTaskStatusForDate(task, dateString),
+      time: format(new Date(task.createdAt), "h:mm a"),
+    })),
     ...notes.slice(0, 1).map((note) => ({
       id: note.id,
       title: note.title || "Untitled Note",
@@ -62,10 +64,7 @@ export function CalendarDay({
   ].slice(0, 3);
 
   // Calculate actual valid tasks count for hasMoreItems
-  const validTasksCount = tasks.filter(
-    (task) => getTaskStatusForDate(task, dateString) !== null
-  ).length;
-  const hasMoreItems = validTasksCount + notes.length > previewItems.length;
+  const hasMoreItems = tasksForDate.length + notes.length > previewItems.length;
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
@@ -178,7 +177,7 @@ export function CalendarDay({
 
         {hasMoreItems && (
           <div className="text-xs text-muted-foreground font-medium px-2 py-1 bg-muted/50 rounded mt-1">
-            +{validTasksCount + notes.length - previewItems.length} more
+            +{tasksForDate.length + notes.length - previewItems.length} more
           </div>
         )}
       </div>

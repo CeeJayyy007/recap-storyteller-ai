@@ -72,13 +72,24 @@ const Profile = () => {
     const today = new Date();
     const todayStr = today.toISOString().split("T")[0];
 
-    // Get tasks for different time periods
+    // Get tasks for different time periods - but for carried-over tasks,
+    // we need to consider all tasks that are currently active today
     const getTasksInPeriod = (startDate: Date) => {
       const start = startDate.toISOString().split("T")[0];
       const end = todayStr;
+
+      // For productivity metrics, we want to include:
+      // 1. Tasks created within the time period
+      // 2. Tasks that are currently carried-over today (regardless of creation date)
       return tasks.filter((task) => {
         const taskDate = task.createdAt.split("T")[0];
-        return taskDate >= start && taskDate <= end;
+        const currentStatus = getTaskStatusForDate(task, todayStr);
+
+        // Include if created within period OR if currently carried-over today
+        return (
+          (taskDate >= start && taskDate <= end) ||
+          currentStatus === "carried-over"
+        );
       });
     };
 
